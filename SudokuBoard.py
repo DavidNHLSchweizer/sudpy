@@ -1,7 +1,10 @@
-import pytest
 INVALIDROWEXCEPTION = 'invalid row'
 INVALIDCOLEXCEPTION = 'invalid col'
+INVALIDROWSEXCEPTION = 'invalid nr of rows'
+INVALIDCOLSEXCEPTION = 'invalid nr of cols'
 INVALIDVALUEEXCEPTION = 'invalid value'
+INVALIDFIELDSEXCEPTION = 'invalid dimension of fields'
+INVALIDSIZEEXCEPTION = 'invalid size'
 INITIAL   = 0
 BOARDSIZE = 9
 
@@ -17,40 +20,32 @@ class Field:
         self.col = col
         self.value = value
 
+class FieldGroup:
+    def __init__(self, nrows, ncols, fields):
+        if nrows <= 0 or nrows > BOARDSIZE:
+            raise ValueError(INVALIDROWSEXCEPTION)
+        if ncols <= 0 or ncols > BOARDSIZE:
+            raise ValueError(INVALIDCOLSEXCEPTION)
+        if nrows * ncols != BOARDSIZE:
+            raise ValueError(INVALIDSIZEEXCEPTION)
+        if fields == None:
+            raise ValueError(INVALIDFIELDSEXCEPTION)
+        if len(fields) != nrows:
+            raise ValueError(INVALIDFIELDSEXCEPTION + ' {}'.format(len(fields)))
+        for i in range(len(fields)):
+            if len(fields[i]) != ncols:
+                raise ValueError(INVALIDFIELDSEXCEPTION + ' {}, {}'.format(len(fields), len(fields[i])))
+        self.nrows = nrows
+        self.ncols = ncols
+        self.fields = fields
 
-class TestField:
-    def test_range(self):
-        f = Field(2,3)
-        assert(f.row==2 and f.col==3)
-        f = Field(0,0)
-        assert(f.row==0 and f.col==0)
-        f = Field(BOARDSIZE-1,BOARDSIZE-1)
-        assert(f.row==BOARDSIZE-1 and f.col==BOARDSIZE-1)
-        with pytest.raises(ValueError, match=INVALIDROWEXCEPTION):
-            f = Field(-1,1)
-        with pytest.raises(ValueError, match=INVALIDROWEXCEPTION):
-            f = Field(BOARDSIZE,1)
-        with pytest.raises(ValueError, match=INVALIDCOLEXCEPTION):
-            f = Field(1,-1)
-        with pytest.raises(ValueError, match=INVALIDCOLEXCEPTION):
-            f = Field(1,BOARDSIZE)
-
-    def test_value(self):        
-        f = Field(2,3)
-        assert(f.value==INITIAL)        
-        f = Field(2,3,4)
-        assert(f.value == 4)
-        f = Field(2,3,1)
-        assert(f.value == 1)
-        f = Field(2,3,BOARDSIZE)
-        assert(f.value == BOARDSIZE)
-        with pytest.raises(ValueError, match=INVALIDVALUEEXCEPTION):
-            f = Field(1,2,-1)
-        with pytest.raises(ValueError, match=INVALIDVALUEEXCEPTION):
-            f = Field(1,2,BOARDSIZE+1)
+    def dump(self):
+        print('fieldgroup : {} rows by {} cols'.format(self.nrows, self.ncols))
+        print('fields: ')
+        for i in range(self.nrows):
+            str = 'row {}'.format(i)
+            for j in range(self.ncols):
+                field = self.fields[i][j]
+                str = str + (' |' if j else ': ') + '{} ({},{},{})'.format(j, field.row, field.col, field.value)
+            print(str)
     
-
-
-
-
-
