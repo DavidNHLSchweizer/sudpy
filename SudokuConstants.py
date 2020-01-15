@@ -1,0 +1,9 @@
+INVALIDROWEXCEPTION = 'invalid row'
+INVALIDCOLEXCEPTION = 'invalid col'
+INVALIDROWSEXCEPTION = 'invalid nr of rows'
+INVALIDCOLSEXCEPTION = 'invalid nr of cols'
+INVALIDVALUEEXCEPTION = 'invalid value'
+INVALIDFIELDSEXCEPTION = 'invalid dimension of fields'
+INVALIDSIZEEXCEPTION = 'invalid size'
+INITIAL   = 0
+BOARDSIZE = 9
