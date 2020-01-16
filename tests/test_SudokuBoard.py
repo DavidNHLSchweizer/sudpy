@@ -1,6 +1,7 @@
 import pytest
 import SudokuConstants
 import SudokuBoard 
+from typing import List 
 
 class TestField:
     def test_Field_errors(self):
@@ -11,11 +12,64 @@ class TestField:
 
     def test_Field(self):        
         f = SudokuBoard.Field()
-        assert f.value == SudokuConstants.INITIAL
+        assert SudokuBoard.IsClear(f.value)
         for value in range(SudokuConstants.BOARDSIZE):
             f = SudokuBoard.Field(value)
             assert f.value == value
-    
+
+class TestAllowedValues:
+    fields = []
+    def test_AllowedValues(self):
+        keeper = SudokuBoard.AllowedValues()
+        # test initial state
+        for i in range(1,SudokuConstants.BOARDSIZE+1):
+            assert keeper.IsAllowedValue(i) == True
+        # add fields and give them a value, then clear
+        for i in range(SudokuConstants.BOARDSIZE):
+            field = SudokuBoard.Field()
+            TestAllowedValues.fields.append(field)
+            keeper.addField(field)
+            assert keeper.IsAllowedValue(i+1) == True
+            assert (i+1) in keeper.GetAllowedValues()
+            field.value = i+1
+            assert keeper.IsAllowedValue(i+1) == False
+            assert not (i+1) in keeper.GetAllowedValues()
+            field.clear()
+            assert keeper.IsAllowedValue(i+1) == True
+            assert (i+1) in keeper.GetAllowedValues()
+        # assigning same value and toggle
+        assert keeper.IsAllowedValue(1) == True
+        TestAllowedValues.fields[0].value = 1
+        assert keeper.IsAllowedValue(1) == False
+        TestAllowedValues.fields[0].value = 1
+        assert keeper.IsAllowedValue(1) == False
+        TestAllowedValues.fields[0].clear()
+        assert keeper.IsAllowedValue(1) == True
+        # assigning over multiple fields with various scenarios
+        assert keeper.IsAllowedValue(1) == True
+        TestAllowedValues.fields[0].value = 1
+        TestAllowedValues.fields[1].value = 1
+        TestAllowedValues.fields[2].value = 1
+        TestAllowedValues.fields[0].clear()
+        assert keeper.IsAllowedValue(1) == False
+        TestAllowedValues.fields[2].clear()
+        assert keeper.IsAllowedValue(1) == False
+        assert keeper.IsAllowedValue(2) == True
+        TestAllowedValues.fields[1].value = 2
+        assert keeper.IsAllowedValue(2) == False
+        assert keeper.IsAllowedValue(1) == True
+        #checking sort order GetAllowedValues
+        av = keeper.GetAllowedValues()
+        prev = av[0]
+        for i in range(1, len(av)):
+            assert av[i] > prev
+            prev = av[i]
+
+            
+
+
+        
+          
 class TestFieldGroup:
     def doFieldGroupTest(self, nrows, ncols, fields):
         fg = SudokuBoard.FieldGroup(nrows, ncols, fields)

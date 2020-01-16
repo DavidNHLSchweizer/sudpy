@@ -5,5 +5,6 @@ INVALIDCOLSEXCEPTION = 'invalid nr of cols'
 INVALIDVALUEEXCEPTION = 'invalid value'
 INVALIDFIELDSEXCEPTION = 'invalid dimension of fields'
 INVALIDSIZEEXCEPTION = 'invalid size'
+INVALIDREFCOUNTEXCEPTION    = 'reference count'
 INITIAL   = 0
 BOARDSIZE = 9
