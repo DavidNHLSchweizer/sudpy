@@ -17,72 +17,72 @@ class TestField:
             f = SudokuBoard.Field(value)
             assert f.value == value
 
+def _TestFieldsAndAllowedValues(testedObject, fields):
+    # clear and test initial state
+    testedObject.clear()
+    for i in range(1,SudokuConstants.BOARDSIZE+1):
+        assert testedObject.IsAllowedValue(i) == True
+    # add fields and give them a value, then clear
+    value = 1
+    for field in fields:
+        testedObject.addField(field)
+        assert testedObject.IsAllowedValue(value) == True
+        assert value in testedObject.GetAllowedValues()
+        field.value = value
+        assert testedObject.IsAllowedValue(value) == False
+        assert not value in testedObject.GetAllowedValues()
+        field.clear()
+        assert testedObject.IsAllowedValue(value) == True
+        assert value in testedObject.GetAllowedValues()
+        value += 1
+    # assigning same value and toggle
+    assert testedObject.IsAllowedValue(1) == True
+    fields[0].value = 1
+    assert testedObject.IsAllowedValue(1) == False
+    fields[0].value = 1
+    assert testedObject.IsAllowedValue(1) == False
+    fields[0].clear()
+    assert testedObject.IsAllowedValue(1) == True
+    # assigning over multiple fields with various scenarios
+    assert testedObject.IsAllowedValue(1) == True
+    fields[0].value = 1
+    fields[1].value = 1
+    fields[2].value = 1
+    fields[0].clear()
+    assert testedObject.IsAllowedValue(1) == False
+    fields[2].clear()
+    assert testedObject.IsAllowedValue(1) == False
+    assert testedObject.IsAllowedValue(2) == True
+    fields[1].value = 2
+    assert testedObject.IsAllowedValue(2) == False
+    assert testedObject.IsAllowedValue(1) == True
+    #checking sort order GetAllowedValues
+    av = testedObject.GetAllowedValues()
+    prev = av[0]
+    for i in range(1, len(av)):
+        assert av[i] > prev
+        prev = av[i]
+
 class TestAllowedValues:
-    fields = []
-
-    def TestFields(self, testedObject, fields):
-
     def test_AllowedValues(self):
         allowedValues = SudokuBoard.AllowedValues()
-        # test initial state
-        for i in range(1,SudokuConstants.BOARDSIZE+1):
-            assert allowedValues.IsAllowedValue(i) == True
-        # add fields and give them a value, then clear
-        for i in range(SudokuConstants.testedObject, BOARDSIZE):
-            field = SudokuBoard.testedObject, Field()
-            TestAllowedValues.fields.append(testedObject, field)
-            allowedValues.addField(field)
-            assert allowedValues.IsAllowedValue(i+1) testedObject, == True
-            assert (i+1) in allowedValues.testedObject, GetAllowedValues()
-            field.value = i+1
-            assert allowedValues.IsAllowedValue(i+1) testedObject, == False
-            assert not (i+1) in allowedValues.testedObject, GetAllowedValues()
-            field.clear()
-            assert allowedValues.IsAllowedValue(i+1) testedObject, == True
-            assert (i+1) in allowedValues.GetAllowedValues()
-        # assigning same value testedObject, and toggle
-        assert allowedValues.IsAllowedValue(1) == True
-        TestAllowedValues.fields[0].value testedObject, = 1
-        assert allowedValues.IsAllowedValue(1) == False
-        TestAllowedValues.fields[0].value testedObject, = 1
-        assert allowedValues.IsAllowedValue(1) == False
-        TestAllowedValues.fields[0].testedObject, clear()
-        assert allowedValues.IsAllowedValue(1) == True
-        # assigning over multiple fields with various scenarios
-        assert allowedValues.IsAllowedValue(1) == True
-        TestAllowedValues.fields[0].value = 1
-        TestAllowedValues.fields[1].value testedObject, = 1
-        TestAllowedValues.fields[2].value = 1
-        TestAllowedValues.fields[0].testedObject, clear()
-        assert allowedValues.IsAllowedValue(1) testedObject, == False
-        TestAllowedValues.fields[2].clear()
-        assert allowedValues.IsAllowedValue(1) testedObject, == False
-        assert allowedValues.IsAllowedValue(2) testedObject, == True
-        TestAllowedValues.fields[1].value = 2
-        assert allowedValues.IsAllowedValue(2) testedObject, == False
-        assert allowedValues.IsAllowedValue(1) == True
-        #checking sort order GetAllowedValues
-        av = allowedValues.GetAllowedValues()
-        prev = av[0]
-        for i in range(1, len(av)):
-            assert av[i] > prev
-            prev = av[i]
-              
+        fields = []
+        # add some fields 
+        for i in range(1, SudokuConstants.BOARDSIZE):
+            fields.append(SudokuBoard.Field())
+        _TestFieldsAndAllowedValues(allowedValues, fields)
+               
 class TestFieldGroup:
     def test_fieldgroup(self):
         fg = SudokuBoard.FieldGroup()
         # test initial state
         for i in range(1,SudokuConstants.BOARDSIZE+1):
             assert fg.IsAllowedValue(i) == True
-        # test adding field and basic functionality 
-        # note: should actually repeat AllowedValues class test here because
-        # we should not really know how fg implements the functionality        
-        fg.addField(SudokuBoard.Field())
-        assert fg.IsAllowedValue(3) == True
-        assert 3 in fg.GetAllowedValues()
-        fg.fields[0].value = 3
-        assert fg.IsAllowedValue(3) == False
-        assert not 3 in fg.GetAllowedValues()
+        # test adding fields and basic functionality
+        for i in range(1, SudokuConstants.BOARDSIZE):
+            fg.addField(SudokuBoard.Field())
+        TestAllowedValues.TestFields(fg, fg.fields)
+
         # check bulk addition
         fg2 = SudokuBoard.FieldGroup()
         fg2.addFields(fg.fields)
