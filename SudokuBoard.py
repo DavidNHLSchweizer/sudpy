@@ -62,36 +62,23 @@ class AllowedValues(Observer):
         return sorted(self._allowedValues)
 
 class FieldGroup:
-    def __init__(self, nrows, ncols, fields):
-        if nrows <= 0 or nrows > SudokuConstants.BOARDSIZE:
-            raise ValueError(SudokuConstants.INVALIDROWSEXCEPTION)
-        if ncols <= 0 or ncols > SudokuConstants.BOARDSIZE:
-            raise ValueError(SudokuConstants.INVALIDCOLSEXCEPTION)
-        if nrows * ncols != SudokuConstants.BOARDSIZE:
-            raise ValueError(SudokuConstants.INVALIDSIZEEXCEPTION)
-        if fields == None:
-            raise ValueError(SudokuConstants.INVALIDFIELDSEXCEPTION)
-        if len(fields) != nrows:
-            raise ValueError(SudokuConstants.INVALIDFIELDSEXCEPTION + ' {}'.format(len(fields)))
-        for i in range(len(fields)):
-            if len(fields[i]) != ncols:
-                raise ValueError(SudokuConstants.INVALIDFIELDSEXCEPTION + ' {}, {}'.format(len(fields), len(fields[i])))
-        self.nrows = nrows
-        self.ncols = ncols
-        self.fields = fields
-
-    def dump(self):
-        print('fieldgroup : {} rows by {} cols'.format(self.nrows, self.ncols))
-        print('fields: ')
-        for i in range(self.nrows):
-            str = 'row {}'.format(i)
-            for j in range(self.ncols):
-                field = self.fields[i][j]
-                str = str + (' |' if j else ': ') + '{} ({})'.format(j, field.value)
-            print(str)
-
-   
-
+    def __init__(self):
+        self.fields:List[Field] = []
+        self._allowedValues = AllowedValues()
+    def clear(self):
+        for field in self.fields:
+            field.clear()
+    def addField(self, field):
+        if not field in self.fields:
+            self.fields.append(field)
+            self._allowedValues.addField(field)
+    def addFields(self, fields):
+        for field in fields:
+            self.addField(field)
+    def IsAllowedValue(self, value):
+        return self._allowedValues.IsAllowedValue(value)
+    def GetAllowedValues(self):
+        return self._allowedValues.GetAllowedValues()
 
 f = Field()
 A = AllowedValues()

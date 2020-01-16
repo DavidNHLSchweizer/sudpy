@@ -19,105 +19,86 @@ class TestField:
 
 class TestAllowedValues:
     fields = []
+
+    def TestFields(self, testedObject, fields):
+
     def test_AllowedValues(self):
-        keeper = SudokuBoard.AllowedValues()
+        allowedValues = SudokuBoard.AllowedValues()
         # test initial state
         for i in range(1,SudokuConstants.BOARDSIZE+1):
-            assert keeper.IsAllowedValue(i) == True
+            assert allowedValues.IsAllowedValue(i) == True
         # add fields and give them a value, then clear
-        for i in range(SudokuConstants.BOARDSIZE):
-            field = SudokuBoard.Field()
-            TestAllowedValues.fields.append(field)
-            keeper.addField(field)
-            assert keeper.IsAllowedValue(i+1) == True
-            assert (i+1) in keeper.GetAllowedValues()
+        for i in range(SudokuConstants.testedObject, BOARDSIZE):
+            field = SudokuBoard.testedObject, Field()
+            TestAllowedValues.fields.append(testedObject, field)
+            allowedValues.addField(field)
+            assert allowedValues.IsAllowedValue(i+1) testedObject, == True
+            assert (i+1) in allowedValues.testedObject, GetAllowedValues()
             field.value = i+1
-            assert keeper.IsAllowedValue(i+1) == False
-            assert not (i+1) in keeper.GetAllowedValues()
+            assert allowedValues.IsAllowedValue(i+1) testedObject, == False
+            assert not (i+1) in allowedValues.testedObject, GetAllowedValues()
             field.clear()
-            assert keeper.IsAllowedValue(i+1) == True
-            assert (i+1) in keeper.GetAllowedValues()
-        # assigning same value and toggle
-        assert keeper.IsAllowedValue(1) == True
-        TestAllowedValues.fields[0].value = 1
-        assert keeper.IsAllowedValue(1) == False
-        TestAllowedValues.fields[0].value = 1
-        assert keeper.IsAllowedValue(1) == False
-        TestAllowedValues.fields[0].clear()
-        assert keeper.IsAllowedValue(1) == True
+            assert allowedValues.IsAllowedValue(i+1) testedObject, == True
+            assert (i+1) in allowedValues.GetAllowedValues()
+        # assigning same value testedObject, and toggle
+        assert allowedValues.IsAllowedValue(1) == True
+        TestAllowedValues.fields[0].value testedObject, = 1
+        assert allowedValues.IsAllowedValue(1) == False
+        TestAllowedValues.fields[0].value testedObject, = 1
+        assert allowedValues.IsAllowedValue(1) == False
+        TestAllowedValues.fields[0].testedObject, clear()
+        assert allowedValues.IsAllowedValue(1) == True
         # assigning over multiple fields with various scenarios
-        assert keeper.IsAllowedValue(1) == True
+        assert allowedValues.IsAllowedValue(1) == True
         TestAllowedValues.fields[0].value = 1
-        TestAllowedValues.fields[1].value = 1
+        TestAllowedValues.fields[1].value testedObject, = 1
         TestAllowedValues.fields[2].value = 1
-        TestAllowedValues.fields[0].clear()
-        assert keeper.IsAllowedValue(1) == False
+        TestAllowedValues.fields[0].testedObject, clear()
+        assert allowedValues.IsAllowedValue(1) testedObject, == False
         TestAllowedValues.fields[2].clear()
-        assert keeper.IsAllowedValue(1) == False
-        assert keeper.IsAllowedValue(2) == True
+        assert allowedValues.IsAllowedValue(1) testedObject, == False
+        assert allowedValues.IsAllowedValue(2) testedObject, == True
         TestAllowedValues.fields[1].value = 2
-        assert keeper.IsAllowedValue(2) == False
-        assert keeper.IsAllowedValue(1) == True
+        assert allowedValues.IsAllowedValue(2) testedObject, == False
+        assert allowedValues.IsAllowedValue(1) == True
         #checking sort order GetAllowedValues
-        av = keeper.GetAllowedValues()
+        av = allowedValues.GetAllowedValues()
         prev = av[0]
         for i in range(1, len(av)):
             assert av[i] > prev
             prev = av[i]
-
-            
-
-
-        
-          
+              
 class TestFieldGroup:
-    def doFieldGroupTest(self, nrows, ncols, fields):
-        fg = SudokuBoard.FieldGroup(nrows, ncols, fields)
-        assert nrows == fg.nrows
-        assert ncols == fg.ncols
-        assert len(fg.fields) == fg.nrows
-        assert fg.ncols == fg.ncols
-        for i in range(fg.nrows):
-            assert len(fg.fields[i]) == fg.ncols
-        for i in range(len(fields)):
-            for j in range(len(fields[i])):
-                assert fields[i][j]==fg.fields[i][j]
-
     def test_fieldgroup(self):
-        self.doFieldGroupTest(3, 3, [[SudokuBoard.Field(),SudokuBoard.Field(),SudokuBoard.Field()],
-                                     [SudokuBoard.Field(),SudokuBoard.Field(),SudokuBoard.Field()],
-                                     [SudokuBoard.Field(),SudokuBoard.Field(),SudokuBoard.Field()]])
-        self.doFieldGroupTest(1, 9, [[SudokuBoard.Field(),SudokuBoard.Field(),SudokuBoard.Field(),
-                                       SudokuBoard.Field(),SudokuBoard.Field(),SudokuBoard.Field(),
-                                       SudokuBoard.Field(),SudokuBoard.Field(),SudokuBoard.Field()]])
-        self.doFieldGroupTest(9, 1, [[SudokuBoard.Field()],[SudokuBoard.Field()],[SudokuBoard.Field()],
-                                     [SudokuBoard.Field()],[SudokuBoard.Field()],[SudokuBoard.Field()],
-                                     [SudokuBoard.Field()],[SudokuBoard.Field()],[SudokuBoard.Field()]])
+        fg = SudokuBoard.FieldGroup()
+        # test initial state
+        for i in range(1,SudokuConstants.BOARDSIZE+1):
+            assert fg.IsAllowedValue(i) == True
+        # test adding field and basic functionality 
+        # note: should actually repeat AllowedValues class test here because
+        # we should not really know how fg implements the functionality        
+        fg.addField(SudokuBoard.Field())
+        assert fg.IsAllowedValue(3) == True
+        assert 3 in fg.GetAllowedValues()
+        fg.fields[0].value = 3
+        assert fg.IsAllowedValue(3) == False
+        assert not 3 in fg.GetAllowedValues()
+        # check bulk addition
+        fg2 = SudokuBoard.FieldGroup()
+        fg2.addFields(fg.fields)
+        for i in range(1, SudokuConstants.BOARDSIZE):
+            assert fg.IsAllowedValue(i) == fg2.IsAllowedValue(i)
+        fg.clear()
+        for i in range(1, SudokuConstants.BOARDSIZE):
+            assert fg.IsAllowedValue(i) == True
+        fg2.clear()
+        # check references to shared fields
+        fg.fields[0].value = 3
+        assert fg2.fields[0].value == 3
+        #check refcount on non-identical fieldgroups
+        fg.addField(SudokuBoard.Field(3))
+        fg2.fields[0].clear()
+        assert fg2.IsAllowedValue(3)
+        assert not fg.IsAllowedValue(3)
 
-    def test_fieldgroup_errors(self):
-        with pytest.raises(ValueError, match=SudokuConstants.INVALIDROWSEXCEPTION):
-            self.doFieldGroupTest(0, 9, [])
-        with pytest.raises(ValueError, match=SudokuConstants.INVALIDROWSEXCEPTION):
-            self.doFieldGroupTest(SudokuConstants.BOARDSIZE+1, 9, [])
-        with pytest.raises(ValueError, match=SudokuConstants.INVALIDCOLSEXCEPTION):
-            self.doFieldGroupTest(9, 0, [])
-        with pytest.raises(ValueError, match=SudokuConstants.INVALIDCOLSEXCEPTION):
-            self.doFieldGroupTest(9, SudokuConstants.BOARDSIZE+1, [])
-        with pytest.raises(ValueError, match=SudokuConstants.INVALIDSIZEEXCEPTION):
-            self.doFieldGroupTest(3, 4, [])
-        with pytest.raises(ValueError, match=SudokuConstants.INVALIDFIELDSEXCEPTION):
-            self.doFieldGroupTest(3, 3, None)
-        with pytest.raises(ValueError, match=SudokuConstants.INVALIDFIELDSEXCEPTION):
-            self.doFieldGroupTest(3, 3, [])
-        with pytest.raises(ValueError, match=SudokuConstants.INVALIDFIELDSEXCEPTION):
-            self.doFieldGroupTest(3, 3, [[SudokuBoard.Field(),SudokuBoard.Field(),SudokuBoard.Field()],
-                                         [SudokuBoard.Field(),SudokuBoard.Field(),SudokuBoard.Field()]])
-        with pytest.raises(ValueError, match=SudokuConstants.INVALIDFIELDSEXCEPTION):
-            self.doFieldGroupTest(3, 3, [[SudokuBoard.Field(),SudokuBoard.Field(),SudokuBoard.Field()],
-                                         [SudokuBoard.Field(),SudokuBoard.Field(),SudokuBoard.Field()],
-                                         [SudokuBoard.Field(),SudokuBoard.Field(),SudokuBoard.Field()],
-                                         [SudokuBoard.Field(),SudokuBoard.Field(),SudokuBoard.Field()]])
-        with pytest.raises(ValueError, match=SudokuConstants.INVALIDFIELDSEXCEPTION):
-            self.doFieldGroupTest(3, 3, [[SudokuBoard.Field(),SudokuBoard.Field(),SudokuBoard.Field()],
-                                         [SudokuBoard.Field(),SudokuBoard.Field()],
-                                         [SudokuBoard.Field(),SudokuBoard.Field(),SudokuBoard.Field()]])
+
