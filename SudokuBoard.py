@@ -2,12 +2,9 @@ import SudokuConstants
 from observerPattern import SimpleSubject, Observer
 from typing import List
 
-def IsClear(value):
-    return value == SudokuConstants.INITIAL
-
 class Field(SimpleSubject):
     def _checkLegalValue(self, value):
-        if not (IsClear(value) or (value >= 1 and value <= SudokuConstants.BOARDSIZE)):
+        if not (SudokuConstants.IsClear(value) or (value >= 1 and value <= SudokuConstants.BOARDSIZE)):
             raise ValueError(SudokuConstants.INVALIDVALUEEXCEPTION + ' {}'.format(value))        
  
     def __init__(self, value=SudokuConstants.INITIAL):
@@ -40,7 +37,7 @@ class AllowedValues(Observer):
             self._allowedValues.append(i)
             self._fieldCount.append(0)
     def _addAllowedValue(self, value):
-        if not IsClear(value):
+        if not SudokuConstants.IsClear(value):
             self._fieldCount[value] -= 1
             if self._fieldCount[value] < 0:
                 raise ValueError(SudokuConstants.INVALIDREFCOUNTEXCEPTION + ' {} (value {})'.format(self._fieldCount[value], value))

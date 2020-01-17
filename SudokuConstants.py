@@ -8,3 +8,7 @@ INVALIDSIZEEXCEPTION = 'invalid size'
 INVALIDREFCOUNTEXCEPTION    = 'reference count'
 INITIAL   = 0
 BOARDSIZE = 9
+
+
+def IsClear(value):
+    return value == INITIAL
