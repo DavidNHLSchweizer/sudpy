@@ -52,7 +52,7 @@ class AllowedValues(Observer):
         self._removeValue(value.value)
     def update(self, value):
         self._addValue(value.oldvalue)
-        self._removeAllowedValue(value.value)
+        self._removeValue(value.value)
     def IsAllowedValue(self, value):
         return value in self._allowedValues
     def GetAllowedValues(self):
