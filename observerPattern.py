@@ -22,7 +22,10 @@ class Observer(ABC):
 
 class SimpleSubject(Subject):
     def __init__(self):
+        #print("start simplesubject init")
+        super(SimpleSubject, self).__init__()
         self.observers:List[Observer] = []
+        #print("end simplesubject init")
 
     def attach(self, observer: Observer) -> None:
         if not observer in self.observers:

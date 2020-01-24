@@ -1,20 +1,27 @@
 import SudokuConstants
 from Value import Value
-from AllowedValues import AllowedValues
+from AllowedValues import AllowedValues, ObservableAllowedValues
 
 class Field:
     def __init__(self, value = SudokuConstants.INITIAL):
         self._value = Value(value)
-        self.row = None
-        self.column = None
-        self.block = None
-        self.allowedValues = AllowedValues()
+        self._row    = None
+        self._column = None
+        self._block  = None
+        self.allowedValues = AllowedValues() # needs more work!
     @property
     def value(self):
         return self._value.value
     @value.setter
     def value(self, newvalue):
         self._value.value = newvalue
+    @property
+    def row(self):
+        return self._row
+    @row.setter
+    def row(self, rowvalue):
+        self._row = rowvalue
+        rowvalue.addField(self)
 
 class RowCol:
     def _checkLegalValue(self, minRow, maxRow, minCol, maxCol):
@@ -50,12 +57,16 @@ class Fields:
     def __init__(self, rowcol: RowCol = None):
         self.fields = []
         self.rowCol = rowcol
-        self.allowedValues = AllowedValues()
+        self.allowedValues = ObservableAllowedValues()
     def addField(self, field: Field):
-        if len(self.fields >= SudokuConstants.BOARDSIZE):
+        if len(self.fields) >= SudokuConstants.BOARDSIZE:
             raise ValueError(SudokuConstants.INVALIDSIZEEXCEPTION)
         self.fields.append(field)
-        self.allowedValues.addValue(field._value)
+        self.allowedValues.addSubject(field._value)
+        field.allowedValues.addSubject(self.allowedValues)
+    def addFields(self, fields):
+        for field in fields: 
+            self.addField(field)
     def IsAllowedValue(self, value):
         return self.allowedValues.IsAllowedValue(value)
     def GetAllowedValues(self):
@@ -77,4 +88,11 @@ class Fields:
         self.rowCol.CheckValid(row, col)
         return self.fields[row * self.nCols + col]
 
+fields = []
+for i in range(1,6):
+    fields.append(Field(i))
 
+F = Fields()
+F.addFields(fields)
+print(F.GetAllowedValues())
+print(F.fields[0].allowedValues.GetAllowedValues())
