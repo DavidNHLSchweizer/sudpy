@@ -5,9 +5,11 @@ INVALIDCOLSEXCEPTION = 'invalid nr of cols'
 INVALIDVALUEEXCEPTION = 'invalid value'
 INVALIDFIELDSEXCEPTION = 'invalid dimension of fields'
 INVALIDSIZEEXCEPTION = 'invalid size'
+INVALIDFIELDSEXCEPTION2 = 'adding invalid block'
 INVALIDREFCOUNTEXCEPTION    = 'reference count'
 INITIAL   = 0
 BOARDSIZE = 9
+BLOCKSIZE = 3
 
 
 def IsClear(value):

@@ -1,27 +1,6 @@
 import SudokuConstants
 from Value import Value
-from AllowedValues import AllowedValues, ObservableAllowedValues
-
-class Field:
-    def __init__(self, value = SudokuConstants.INITIAL):
-        self._value = Value(value)
-        self._row    = None
-        self._column = None
-        self._block  = None
-        self.allowedValues = AllowedValues() # needs more work!
-    @property
-    def value(self):
-        return self._value.value
-    @value.setter
-    def value(self, newvalue):
-        self._value.value = newvalue
-    @property
-    def row(self):
-        return self._row
-    @row.setter
-    def row(self, rowvalue):
-        self._row = rowvalue
-        rowvalue.addField(self)
+from AllowedValues import AllowedValues
 
 class RowCol:
     def _checkLegalValue(self, minRow, maxRow, minCol, maxCol):
@@ -35,7 +14,9 @@ class RowCol:
             raise ValueError(SudokuConstants.INVALIDVALUEEXCEPTION + ' col {}'.format(maxCol))
         if (maxRow - minRow + 1) * (maxCol - minCol + 1) != SudokuConstants.BOARDSIZE:
             raise ValueError(SudokuConstants.INVALIDVALUEEXCEPTION + ' dimension ({},{}) ({},{})'.format(minRow, maxRow, minCol, maxCol))
-    def __init__(self, minRow, maxRow, minCol, maxCol):
+    def __init__(self, minRow, nRows, minCol, nCols):
+        maxRow = minRow + nRows -1
+        maxCol = minCol + nCols -1
         self._checkLegalValue(minRow, maxRow, minCol, maxCol)
         self.minRow = minRow
         self.maxRow = maxRow
@@ -47,23 +28,64 @@ class RowCol:
     @property
     def nCols(self):
         return self.maxCol - self.minCol + 1
-    def CheckValid(self, row, col):
-        if row < self.minRow or row > self.maxRow:
-            raise ValueError(SudokuConstants.INVALIDROWEXCEPTION + ' {}'.format(row))
-        if col < self.minCol or row > self.maxCol:
-            raise ValueError(SudokuConstants.INVALIDCOLEXCEPTION + ' {}'.format(col))
-      
+    def IsInRange(self, row, col):
+        if row < self.minRow or row > self.maxRow or col < self.minCol or col > self.maxCol:
+            return False
+        return True
+    
+class Field:
+    def __init__(self, value = SudokuConstants.INITIAL):
+        self._value = Value(value)
+        self._row    = None
+        self._column = None
+        self._block  = None
+        self.allowedValues = AllowedValues()
+    @property
+    def value(self):
+        return self._value.value
+    @value.setter
+    def value(self, newvalue):
+        self._value.value = newvalue
+    def _addFields(self, fields):
+        if len(fields) != SudokuConstants.BOARDSIZE:
+            raise SudokuConstants.INVALIDFIELDSEXCEPTION
+        if not self in fields:
+            raise SudokuConstants.INVALIDFIELDSEXCEPTION2
+        for field in fields:
+            if field != self:
+                self.allowedValues.addValue(field.value)
+    @property
+    def Row(self):
+        return self._row
+    @Row.setter
+    def Row(self, rowFields):
+        self._row = rowFields
+        self._addFields(rowFields)
+    @property
+    def Column(self):
+        return self._column
+    @Column.setter
+    def Column(self, columnFields):
+        self._column = columnFields
+        self._addFields(columnFields)
+    @property
+    def Block(self):
+        return self._block
+    @Block.setter
+    def Block(self, blockFields):
+        self._block = blockFields
+        self._addFields(blockFields)
+        
 class Fields:
     def __init__(self, rowcol: RowCol = None):
         self.fields = []
         self.rowCol = rowcol
-        self.allowedValues = ObservableAllowedValues()
+        self.allowedValues = AllowedValues()
     def addField(self, field: Field):
         if len(self.fields) >= SudokuConstants.BOARDSIZE:
             raise ValueError(SudokuConstants.INVALIDSIZEEXCEPTION)
         self.fields.append(field)
-        self.allowedValues.addSubject(field._value)
-        field.allowedValues.addSubject(self.allowedValues)
+        self.allowedValues.addValue(field._value)   
     def addFields(self, fields):
         for field in fields: 
             self.addField(field)
@@ -83,16 +105,8 @@ class Fields:
         return self.rowCol.nCols
     @property
     def field(self, row, col):
-        if self.rowCol == None:
+        if self.rowCol == None or not self.rowCol.IsInRange(row, col):
             return None        
-        self.rowCol.CheckValid(row, col)
         return self.fields[row * self.nCols + col]
+        
 
-fields = []
-for i in range(1,6):
-    fields.append(Field(i))
-
-F = Fields()
-F.addFields(fields)
-print(F.GetAllowedValues())
-print(F.fields[0].allowedValues.GetAllowedValues())

@@ -1,0 +1,6 @@
+{
+    "files.exclude": {
+        "*.asta": true,
+        "*.bat": true
+    }
+}
