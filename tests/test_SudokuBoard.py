@@ -152,41 +152,44 @@ class TestRowCol:
             RowCol(0, SudokuConstants.BLOCKSIZE+1,2,SudokuConstants.BLOCKSIZE+1)
    
 
-# class TestFields:
-#     def test_fields(self):
-#         singleFields = []
-#         for i in range(1,SudokuConstants.BOARDSIZE+1):
-#             singleFields.append(Field(i))
-#         fields = Fields()
-#         for field in singleFields:
-#             fields.addField(field)
-#         assert len(fields.GetAllowedValues()) == 0
+class TestFields:
+    def test_fields(self):
+        singleFields = []
+        for i in range(1,SudokuConstants.BOARDSIZE+1):
+            singleFields.append(Field(i))
+        fields = Fields()
+        for field in singleFields:
+            fields.addField(field)
+        assert len(fields.GetAllowedValues()) == 0
+        singleFields[0].value.clear()
+        assert len(fields.GetAllowedValues()) == 1
 
+    def test_fields_for_board(self):
+        boardfields = []
+        # # test initial state
+        # for i in range(1,SudokuConstants.BOARDSIZE+1):
+        #     assert fg.IsAllowedValue(i) == True
+        # # test adding fields and basic functionality
+        # for i in range(1, SudokuConstants.BOARDSIZE):
+        #     fg.addField(SudokuBoard.Field())
+        # TestAllowedValues.TestFields(fg, fg.fields)
 
-#         # # test initial state
-#         # for i in range(1,SudokuConstants.BOARDSIZE+1):
-#         #     assert fg.IsAllowedValue(i) == True
-#         # # test adding fields and basic functionality
-#         # for i in range(1, SudokuConstants.BOARDSIZE):
-#         #     fg.addField(SudokuBoard.Field())
-#         # TestAllowedValues.TestFields(fg, fg.fields)
-
-#         # # check bulk addition
-#         # fg2 = SudokuBoard.FieldGroup()
-#         # fg2.addFields(fg.fields)
-#         # for i in range(1, SudokuConstants.BOARDSIZE):
-#         #     assert fg.IsAllowedValue(i) == fg2.IsAllowedValue(i)
-#         # fg.clear()
-#         # for i in range(1, SudokuConstants.BOARDSIZE):
-#         #     assert fg.IsAllowedValue(i) == True
-#         # fg2.clear()
-#         # # check references to shared fields
-#         # fg.fields[0].value = 3
-#         # assert fg2.fields[0].value == 3
-#         # #check refcount on non-identical fieldgroups
-#         # fg.addField(SudokuBoard.Field(3))
-#         # fg2.fields[0].clear()
-#         # assert fg2.IsAllowedValue(3)
-#         # assert not fg.IsAllowedValue(3)
+        # # check bulk addition
+        # fg2 = SudokuBoard.FieldGroup()
+        # fg2.addFields(fg.fields)
+        # for i in range(1, SudokuConstants.BOARDSIZE):
+        #     assert fg.IsAllowedValue(i) == fg2.IsAllowedValue(i)
+        # fg.clear()
+        # for i in range(1, SudokuConstants.BOARDSIZE):
+        #     assert fg.IsAllowedValue(i) == True
+        # fg2.clear()
+        # # check references to shared fields
+        # fg.fields[0].value = 3
+        # assert fg2.fields[0].value == 3
+        # #check refcount on non-identical fieldgroups
+        # fg.addField(SudokuBoard.Field(3))
+        # fg2.fields[0].clear()
+        # assert fg2.IsAllowedValue(3)
+        # assert not fg.IsAllowedValue(3)
 
 
