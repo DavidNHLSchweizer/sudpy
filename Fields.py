@@ -2,38 +2,6 @@ import SudokuConstants
 from Value import Value
 from AllowedValues import AllowedValues
 
-class RowCol:
-    def _checkLegalValue(self, minRow, maxRow, minCol, maxCol):
-        if (minRow < 0 or minRow >= SudokuConstants.BOARDSIZE):
-            raise ValueError(SudokuConstants.INVALIDVALUEEXCEPTION + ' row {}'.format(minRow))        
-        if (maxRow < minRow or maxRow >= SudokuConstants.BOARDSIZE):
-            raise ValueError(SudokuConstants.INVALIDVALUEEXCEPTION + ' row {}'.format(maxRow))        
-        if (minCol < 0 or minCol >= SudokuConstants.BOARDSIZE):
-            raise ValueError(SudokuConstants.INVALIDVALUEEXCEPTION + ' col {}'.format(minCol))        
-        if (maxCol < minCol or maxCol >= SudokuConstants.BOARDSIZE):
-            raise ValueError(SudokuConstants.INVALIDVALUEEXCEPTION + ' col {}'.format(maxCol))
-        totalSize = (maxRow - minRow + 1) * (maxCol - minCol + 1)
-        if  totalSize != SudokuConstants.BOARDSIZE and totalSize != SudokuConstants.BOARDSIZE * SudokuConstants.BOARDSIZE:
-            raise ValueError(SudokuConstants.INVALIDVALUEEXCEPTION + ' dimension ({},{}) ({},{})'.format(minRow, maxRow, minCol, maxCol))
-    def __init__(self, minRow, nRows, minCol, nCols):
-        maxRow = minRow + nRows -1
-        maxCol = minCol + nCols -1
-        self._checkLegalValue(minRow, maxRow, minCol, maxCol)
-        self.minRow = minRow
-        self.maxRow = maxRow
-        self.minCol = minCol
-        self.maxCol = maxCol
-    @property
-    def nRows(self):
-        return self.maxRow - self.minRow + 1
-    @property
-    def nCols(self):
-        return self.maxCol - self.minCol + 1
-    def IsInRange(self, row, col):
-        if row < self.minRow or row > self.maxRow or col < self.minCol or col > self.maxCol:
-            return False
-        return True
-    
 class Field:
     def __init__(self, value = SudokuConstants.INITIAL):
         self._value = Value(value)
@@ -47,7 +15,7 @@ class Field:
     @value.setter
     def value(self, newvalue):
         self._value.value = newvalue
-    def _addFields(self, fields):
+    def _addInfluencingFields(self, fields):        
         if len(fields) != SudokuConstants.BOARDSIZE:
             raise SudokuConstants.INVALIDFIELDSEXCEPTION
         if not self in fields:
@@ -61,36 +29,33 @@ class Field:
     @Row.setter
     def Row(self, rowFields):
         self._row = rowFields
-        self._addFields(rowFields)
+        self._addInfluencingFields(rowFields)        
     @property
     def Column(self):
         return self._column
     @Column.setter
     def Column(self, columnFields):
         self._column = columnFields
-        self._addFields(columnFields)
+        self._addInfluencingFields(columnFields)        
     @property
     def Block(self):
         return self._block
     @Block.setter
     def Block(self, blockFields):
         self._block = blockFields
-        self._addFields(blockFields)
+        self._addInfluencingFields(blockFields)        
     def clear(self):
         self._value.clear()
-    def dump(self):
-        print("Field: value " + str(self.value))
         
 class Fields:
-    def __init__(self, rowcol: RowCol = None):
+    def __init__(self):
         self.fields = []
-        self.rowCol = rowcol
         self.allowedValues = AllowedValues()
+        self._nCols = 0
     def addField(self, field: Field):
-        #if len(self.fields) >= SudokuConstants.BOARDSIZE:
-         #   raise ValueError(SudokuConstants.INVALIDSIZEEXCEPTION)
         self.fields.append(field)
         self.allowedValues.addValue(field._value)   
+        self._nCols += 1
     def addFields(self, fields):
         for field in fields: 
             self.addField(field)
@@ -98,24 +63,34 @@ class Fields:
         return self.allowedValues.IsAllowedValue(value)
     def GetAllowedValues(self):
         return self.allowedValues.GetAllowedValues()
-    @property
-    def nRows(self):
-        if self.rowCol == None:
-            return 0
-        return self.rowCol.nRows
+    def _GetIndex(self, field):
+        if not field in self.fields:
+            return SudokuConstants.INDEXNOTFOUND        
+        return self.fields.index(field)
+    def _RowColToIndex(self, row, col):
+        return row * self.nCols + col
+    def _IndexToRow(self, index):
+        return index // self.nCols
+    def _IndexToCol(self, index):
+        return index % self.nCols
+    def field(self, row, col):
+        return self.fields[self._RowColToIndex(row, col)]
+    def fieldRow(self, field):
+        return self._IndexToRow(self._GetIndex(field))
+    def fieldCol(self, field):
+        return self._IndexToCol(self._GetIndex(field))
     @property
     def nCols(self):
-        if self.rowCol == None:
-            return 0
-        return self.rowCol.nCols
-    def field(self, row, col):
-        if self.rowCol == None or not self.rowCol.IsInRange(row, col):
-            return None        
-        return self.fields[row * self.nCols + col]
+        return self._nCols
+    @nCols.setter
+    def nCols(self, value):
+        if value <= 0 or value > len(self.fields) or len(self.fields) % value != 0:
+            raise ValueError(SudokuConstants.INVALIDCOLSEXCEPTION + ' {}'.format(value))
+        self._nCols = value
         
 class Board(Fields):
     def __init__(self):
-        super().__init__(RowCol(0,SudokuConstants.BOARDSIZE, 0, SudokuConstants.BOARDSIZE))
+        super().__init__()
         self._init_fields()
         self._init_Rows()
         self._init_Cols()
@@ -125,19 +100,22 @@ class Board(Fields):
         for _ in range(SudokuConstants.BOARDSIZE):            
             for _ in range(SudokuConstants.BOARDSIZE):
                 self.addField(Field())
+        self.nCols = SudokuConstants.BOARDSIZE
     def _init_Rows(self):
         self.Rows = []
         for r in range(SudokuConstants.BOARDSIZE):
-            Row = Fields(RowCol(r, 1, 0, SudokuConstants.BOARDSIZE))
+            Row = Fields()
             for c in range(SudokuConstants.BOARDSIZE):
                 Row.addField(self.field(r, c))
+            Row.nCols = SudokuConstants.BOARDSIZE
             self.Rows.append(Row)
     def _init_Cols(self):
         self.Cols = []
         for c in range(SudokuConstants.BOARDSIZE):
-            Col = Fields(RowCol(0, SudokuConstants.BOARDSIZE, c, 1))
+            Col = Fields()
             for r in range(SudokuConstants.BOARDSIZE):
                 Col.addField(self.field(r, c))
+            Col.nCols = 1
             self.Cols.append(Col)
     def _init_Blocks(self):
         self.Blocks = []
@@ -146,10 +124,11 @@ class Board(Fields):
             BlockRow = []
             for bCol in range(SudokuConstants.BLOCKSIZE):
                 c0 = bCol * SudokuConstants.BLOCKSIZE
-                Block = Fields(RowCol(r0, SudokuConstants.BLOCKSIZE, c0, SudokuConstants.BLOCKSIZE))
+                Block = Fields()
                 for r in range(r0, r0+SudokuConstants.BLOCKSIZE):
                     for c in range(c0, c0+SudokuConstants.BLOCKSIZE):
-                        Block.addField(self.field(r, c))
+                        Block.addField(self.field(r, c))`
+                Block.nCols = SudokuConstants.BLOCKSIZE
                 BlockRow.append(Block)
             self.Blocks.append(BlockRow)
     def Row(self, row):

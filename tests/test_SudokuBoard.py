@@ -4,7 +4,7 @@ import SudokuBoard
 from AllowedValues import AllowedValues
 from Value import Value
 from typing import List 
-from Fields import Field, RowCol, Fields
+from Fields import Field, Fields
 
 class TestValue:
     def test_value(self):
@@ -104,54 +104,6 @@ class TestField:
         with pytest.raises(ValueError, match=SudokuConstants.INVALIDVALUEEXCEPTION):
             Field(SudokuConstants.BOARDSIZE+1)
 
-class TestRowCol:
-    def test_RowCol(self):
-        RC = RowCol(4, 1, 0, SudokuConstants.BOARDSIZE)
-        assert RC.minRow == 4
-        assert RC.maxRow == 4
-        assert RC.minCol == 0           
-        assert RC.maxCol == SudokuConstants.BOARDSIZE-1
-        assert RC.nRows == 1
-        assert RC.nCols == SudokuConstants.BOARDSIZE
-        assert RC.IsInRange(4,3)
-        assert not RC.IsInRange(3,3)
-        RC = RowCol(0, SudokuConstants.BOARDSIZE, 6, 1)
-        assert RC.minRow == 0
-        assert RC.maxRow == SudokuConstants.BOARDSIZE-1
-        assert RC.minCol == 6           
-        assert RC.maxCol == 6
-        assert RC.nRows == SudokuConstants.BOARDSIZE
-        assert RC.nCols == 1
-        assert RC.IsInRange(4,6)
-        assert not RC.IsInRange(3,0)
-        RC = RowCol(3, SudokuConstants.BLOCKSIZE, 3, SudokuConstants.BLOCKSIZE)
-        assert RC.minRow == 3
-        assert RC.maxRow == 3 + SudokuConstants.BLOCKSIZE-1
-        assert RC.minCol == 3           
-        assert RC.maxCol == 3 + SudokuConstants.BLOCKSIZE-1
-        assert RC.nRows == SudokuConstants.BLOCKSIZE
-        assert RC.nCols == SudokuConstants.BLOCKSIZE
-        assert RC.IsInRange(3,3)
-        assert RC.IsInRange(3+SudokuConstants.BLOCKSIZE-1,3)
-        assert RC.IsInRange(3,3+SudokuConstants.BLOCKSIZE-1)
-        assert RC.IsInRange(3+SudokuConstants.BLOCKSIZE-1,3+SudokuConstants.BLOCKSIZE-1)
-        assert not RC.IsInRange(3,2)
-        assert not RC.IsInRange(2,3)
-        assert not RC.IsInRange(3+SudokuConstants.BLOCKSIZE,3)
-        assert not RC.IsInRange(3, 3+SudokuConstants.BLOCKSIZE)
-        # test some errors, should be sufficient
-        with pytest.raises(ValueError, match=SudokuConstants.INVALIDVALUEEXCEPTION):
-            RowCol(-1,1,2,3)
-        with pytest.raises(ValueError, match=SudokuConstants.INVALIDVALUEEXCEPTION):
-            RowCol(0,0,2,3)
-        with pytest.raises(ValueError, match=SudokuConstants.INVALIDVALUEEXCEPTION):
-            RowCol(SudokuConstants.BOARDSIZE,SudokuConstants.BOARDSIZE,SudokuConstants.BOARDSIZE,SudokuConstants.BOARDSIZE)
-        with pytest.raises(ValueError, match=SudokuConstants.INVALIDVALUEEXCEPTION):
-            RowCol(SudokuConstants.BOARDSIZE-1,2,SudokuConstants.BOARDSIZE-1,2)
-        with pytest.raises(ValueError, match=SudokuConstants.INVALIDVALUEEXCEPTION):
-            RowCol(0, SudokuConstants.BLOCKSIZE+1,2,SudokuConstants.BLOCKSIZE+1)
-   
-
 class TestFields:
     def test_fields(self):
         singleFields = []
@@ -161,11 +113,53 @@ class TestFields:
         for field in singleFields:
             fields.addField(field)
         assert len(fields.GetAllowedValues()) == 0
-        singleFields[0].value.clear()
+        val = singleFields[0].value
+        singleFields[0].clear()
         assert len(fields.GetAllowedValues()) == 1
+        singleFields[0].value = val
+
+        fields.nCols = 1
+        for r in range(SudokuConstants.BOARDSIZE):
+            f = fields.field(r, 0)
+            assert f.value == r+1
+        fields.nCols = SudokuConstants.BOARDSIZE
+        for c in range(SudokuConstants.BOARDSIZE):
+            f = fields.field(0, c)
+            assert f.value == c+1
+        x = 1
+        fields.nCols = SudokuConstants.BLOCKSIZE
+        for r in range(SudokuConstants.BLOCKSIZE):
+            for c in range(SudokuConstants.BLOCKSIZE):                
+                f = fields.field(r, c)
+                assert f.value == x
+                x += 1
+        fields.nCols = SudokuConstants.BOARDSIZE
+        c = 0
+        for field in singleFields:
+            assert fields.fieldRow(field) == 0
+            assert fields.fieldCol(field) == c
+            c += 1
+        fields.nCols = 1
+        r = 0
+        for field in singleFields:
+            assert fields.fieldRow(field) == r
+            assert fields.fieldCol(field) == 0
+            r += 1
+        fields.nCols = SudokuConstants.BLOCKSIZE
+        r = 0
+        c = 0
+        for field in singleFields:
+            assert fields.fieldRow(field) == r
+            assert fields.fieldCol(field) == c            
+            if c < SudokuConstants.BLOCKSIZE-1:
+                c += 1
+            else:
+                c = 0
+                r += 1
 
     def test_fields_for_board(self):
-        boardfields = []
+        pass
+        #boardfields = []
         # # test initial state
         # for i in range(1,SudokuConstants.BOARDSIZE+1):
         #     assert fg.IsAllowedValue(i) == True

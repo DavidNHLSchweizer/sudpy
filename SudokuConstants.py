@@ -10,6 +10,7 @@ INVALIDREFCOUNTEXCEPTION    = 'reference count'
 INITIAL   = 0
 BOARDSIZE = 9
 BLOCKSIZE = 3
+INDEXNOTFOUND = -1
 
 
 def IsClear(value):
