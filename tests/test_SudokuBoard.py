@@ -109,6 +109,7 @@ class TestFields:
         singleFields = []
         for i in range(1,SudokuConstants.BOARDSIZE+1):
             singleFields.append(Field(i))
+    # test on values
         fields = Fields()
         for field in singleFields:
             fields.addField(field)
@@ -117,15 +118,18 @@ class TestFields:
         singleFields[0].clear()
         assert len(fields.GetAllowedValues()) == 1
         singleFields[0].value = val
-
+    # testing the fields property
+        #one column configuration
         fields.nCols = 1
         for r in range(SudokuConstants.BOARDSIZE):
             f = fields.field(r, 0)
             assert f.value == r+1
+        #one row configuration
         fields.nCols = SudokuConstants.BOARDSIZE
         for c in range(SudokuConstants.BOARDSIZE):
             f = fields.field(0, c)
             assert f.value == c+1
+        #block configuration
         x = 1
         fields.nCols = SudokuConstants.BLOCKSIZE
         for r in range(SudokuConstants.BLOCKSIZE):
@@ -133,19 +137,29 @@ class TestFields:
                 f = fields.field(r, c)
                 assert f.value == x
                 x += 1
+    # testing the fieldRow and fieldColumn properties
+        #one row configuration
         fields.nCols = SudokuConstants.BOARDSIZE
+        assert fields.nRows == 1
+        assert fields.nCols == SudokuConstants.BOARDSIZE
         c = 0
         for field in singleFields:
             assert fields.fieldRow(field) == 0
             assert fields.fieldCol(field) == c
             c += 1
+        #one column configuration
         fields.nCols = 1
+        assert fields.nCols == 1
+        assert fields.nRows == SudokuConstants.BOARDSIZE
         r = 0
         for field in singleFields:
             assert fields.fieldRow(field) == r
             assert fields.fieldCol(field) == 0
             r += 1
+        #block configuration
         fields.nCols = SudokuConstants.BLOCKSIZE
+        assert fields.nCols == SudokuConstants.BLOCKSIZE
+        assert fields.nRows == SudokuConstants.BLOCKSIZE
         r = 0
         c = 0
         for field in singleFields:
