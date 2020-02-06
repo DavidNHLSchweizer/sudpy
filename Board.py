@@ -1,4 +1,4 @@
-from Fields import Fields
+from Fields import Field, Fields
 import SudokuConstants
 
 class Board(Fields):
