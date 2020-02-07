@@ -33,7 +33,7 @@ class AllowedValues(Observer):
     def GetAllowedValues(self):
         return sorted(self._allowedValues)    
 
-class _AllowedValues:
+class ContainsAllowedValues:
     def __init__(self):
         self.allowedValues = AllowedValues()
     def IsAllowedValue(self, value):

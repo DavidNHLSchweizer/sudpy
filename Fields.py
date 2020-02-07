@@ -1,8 +1,8 @@
 import SudokuConstants
 from Value import Value
-from AllowedValues import _AllowedValues
+from AllowedValues import ContainsAllowedValues
  
-class Field(_AllowedValues):
+class Field(ContainsAllowedValues):
     def __init__(self, value = SudokuConstants.INITIAL):
         super().__init__()
         self._value = Value(value)
@@ -47,7 +47,7 @@ class Field(_AllowedValues):
     def clear(self):
         self._value.clear()
         
-class Fields(_AllowedValues):
+class Fields(ContainsAllowedValues):
     def __init__(self):
         super().__init__()
         self.fields = []
