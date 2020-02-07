@@ -60,6 +60,4 @@ class Board(Fields):
             field.Row = self.Row(row)
             field.Column = self.Column(col)
             field.Block = self.Block(row,col)
-        
-Board()
 

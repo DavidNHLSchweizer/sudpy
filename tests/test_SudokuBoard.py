@@ -5,6 +5,7 @@ from AllowedValues import AllowedValues
 from Value import Value
 from typing import List 
 from Fields import Field, Fields
+from Board import Board
 
 class TestValue:
     def test_value(self):
@@ -171,33 +172,91 @@ class TestFields:
                 c = 0
                 r += 1
 
-    def test_fields_for_board(self):
-        pass
-        #boardfields = []
-        # # test initial state
-        # for i in range(1,SudokuConstants.BOARDSIZE+1):
-        #     assert fg.IsAllowedValue(i) == True
-        # # test adding fields and basic functionality
-        # for i in range(1, SudokuConstants.BOARDSIZE):
-        #     fg.addField(SudokuBoard.Field())
-        # TestAllowedValues.TestFields(fg, fg.fields)
+    def test_fields_for_board(self):        
+        board = Board()
+        #basic sanity check
+        assert board.nRows == SudokuConstants.BOARDSIZE
+        assert board.nCols == SudokuConstants.BOARDSIZE
+        #check row for each field
+        for r in range(SudokuConstants.BOARDSIZE):
+            for c in range(SudokuConstants.BOARDSIZE):
+                field = board.field(r,c)
+                row = field.Row
+                assert row.nCols == SudokuConstants.BOARDSIZE
+                assert row.nRows == 1
+                assert row._Contains(field)
+                for c2 in range(SudokuConstants.BOARDSIZE):
+                    if c2 != c:
+                        assert row._Contains(board.field(r, c2)) 
+        #check column for each field
+        for r in range(SudokuConstants.BOARDSIZE):
+            for c in range(SudokuConstants.BOARDSIZE):
+                field = board.field(r,c)
+                col = field.Column
+                assert col.nRows == SudokuConstants.BOARDSIZE
+                assert col.nCols == 1
+                assert col._Contains(field)
+                for r2 in range(SudokuConstants.BOARDSIZE):
+                    if r2 != r:
+                        assert col._Contains(board.field(r2, c))
+        #check block for each field
+        for r in range(SudokuConstants.BOARDSIZE):
+            for c in range(SudokuConstants.BOARDSIZE):
+                field = board.field(r,c)
+                blk = field.Block
+                assert blk.nRows == SudokuConstants.BLOCKSIZE
+                assert blk.nCols == SudokuConstants.BLOCKSIZE
+                assert blk._Contains(field)
+                r0 = (r // SudokuConstants.BLOCKSIZE) * SudokuConstants.BLOCKSIZE
+                c0 = (c // SudokuConstants.BLOCKSIZE) * SudokuConstants.BLOCKSIZE
+                for r2 in range(r0, r0 + SudokuConstants.BLOCKSIZE):
+                    for c2 in range(c0, c0 + SudokuConstants.BLOCKSIZE):
+                        if r2 != r or c2 != c:
+                            assert blk._Contains(board.field(r2, c2))
 
-        # # check bulk addition
-        # fg2 = SudokuBoard.FieldGroup()
-        # fg2.addFields(fg.fields)
-        # for i in range(1, SudokuConstants.BOARDSIZE):
-        #     assert fg.IsAllowedValue(i) == fg2.IsAllowedValue(i)
-        # fg.clear()
-        # for i in range(1, SudokuConstants.BOARDSIZE):
-        #     assert fg.IsAllowedValue(i) == True
-        # fg2.clear()
-        # # check references to shared fields
-        # fg.fields[0].value = 3
-        # assert fg2.fields[0].value == 3
-        # #check refcount on non-identical fieldgroups
-        # fg.addField(SudokuBoard.Field(3))
-        # fg2.fields[0].clear()
-        # assert fg2.IsAllowedValue(3)
-        # assert not fg.IsAllowedValue(3)
+    def _testing_influencing_fields(self, field, value, assertExpected, fields):
+        for f in fields.fields:
+            if f != field:
+                assert f.IsAllowedValue(value) == assertExpected            
 
-
+    def test_board_allowed_values(self):
+        board = Board()
+        for field in board.fields:
+            assert len(field.GetAllowedValues()) == SudokuConstants.BOARDSIZE
+        field = board.field(3,3)
+        field.value = 5
+        self._testing_influencing_fields(field, 5, False, field.Row)
+        self._testing_influencing_fields(field, 5, False, field.Column)
+        self._testing_influencing_fields(field, 5, False, field.Block)
+        field.clear()
+        self._testing_influencing_fields(field, 5, True, field.Row)
+        self._testing_influencing_fields(field, 5, True, field.Column)
+        self._testing_influencing_fields(field, 5, True, field.Block)
+        field.value = 5
+        self._testing_influencing_fields(field, 5, False, field.Row)
+        self._testing_influencing_fields(field, 5, False, field.Column)
+        self._testing_influencing_fields(field, 5, False, field.Block)
+        self._testing_influencing_fields(field, 1, True, field.Row)
+        self._testing_influencing_fields(field, 1, True, field.Column)
+        self._testing_influencing_fields(field, 1, True, field.Block)
+        field.value = 1
+        self._testing_influencing_fields(field, 5, True, field.Row)
+        self._testing_influencing_fields(field, 5, True, field.Column)
+        self._testing_influencing_fields(field, 5, True, field.Block)
+        self._testing_influencing_fields(field, 1, False, field.Row)
+        self._testing_influencing_fields(field, 1, False, field.Column)
+        self._testing_influencing_fields(field, 1, False, field.Block)
+        field2 = board.field(5, 3)
+        assert not field2.IsAllowedValue(1)        
+        assert field2.IsAllowedValue(5)
+        assert field2.IsAllowedValue(6)
+        assert field.IsAllowedValue(6)
+        field2.value = 6
+        assert not field.IsAllowedValue(6)
+        field3 = board.field(3, 5)
+        field3.value = 6
+        assert not field.IsAllowedValue(6)
+        field2.clear()
+        assert not field.IsAllowedValue(6)
+        field3.clear()
+        assert field.IsAllowedValue(6)

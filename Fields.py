@@ -46,6 +46,10 @@ class Field:
         self._addInfluencingFields(blockFields.fields)        
     def clear(self):
         self._value.clear()
+    def IsAllowedValue(self, value):
+        return self.allowedValues.IsAllowedValue(value)
+    def GetAllowedValues(self):
+        return self.allowedValues.GetAllowedValues()
         
 class Fields:
     def __init__(self):
@@ -67,6 +71,8 @@ class Fields:
         if not field in self.fields:
             return SudokuConstants.INDEXNOTFOUND        
         return self.fields.index(field)
+    def _Contains(self, field):
+        return field in self.fields
     def _RowColToIndex(self, row, col):
         return row * self.nCols + col
     def _IndexToRow(self, index):

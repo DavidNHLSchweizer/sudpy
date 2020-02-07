@@ -29,7 +29,7 @@ class AllowedValues(Observer):
         self._addValue(subject.oldvalue)
         self._removeValue(subject.value)
     def IsAllowedValue(self, value):
-        return value in self._allowedValues
+        return value == SudokuConstants.INITIAL or value in self._allowedValues
     def GetAllowedValues(self):
         return sorted(self._allowedValues)    
 
