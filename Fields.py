@@ -2,13 +2,23 @@ import SudokuConstants
 from Value import Value
 from AllowedValues import AllowedValues
 
-class Field:
+class _AllowedValues:
+    def __init__(self):
+        self.allowedValues = AllowedValues()
+    def IsAllowedValue(self, value):
+        return self.allowedValues.IsAllowedValue(value)
+    def GetAllowedValues(self):
+        return self.allowedValues.GetAllowedValues()
+    def ObserveValue(self, value: Value):
+        self.allowedValues.ObserveValue(value)
+ 
+class Field(_AllowedValues):
     def __init__(self, value = SudokuConstants.INITIAL):
+        super().__init__()
         self._value = Value(value)
         self._row    = None
         self._column = None
         self._block  = None
-        self.allowedValues = AllowedValues()
     @property
     def value(self):
         return self._value.value
@@ -22,7 +32,7 @@ class Field:
             raise SudokuConstants.INVALIDFIELDSEXCEPTION2
         for field in fields:
             if field != self:
-                self.allowedValues.addValue(field._value)
+                self.ObserveValue(field._value)
     @property
     def Row(self):
         return self._row
@@ -46,27 +56,19 @@ class Field:
         self._addInfluencingFields(blockFields.fields)        
     def clear(self):
         self._value.clear()
-    def IsAllowedValue(self, value):
-        return self.allowedValues.IsAllowedValue(value)
-    def GetAllowedValues(self):
-        return self.allowedValues.GetAllowedValues()
         
-class Fields:
+class Fields(_AllowedValues):
     def __init__(self):
+        super().__init__()
         self.fields = []
-        self.allowedValues = AllowedValues()
         self._nCols = 0
     def addField(self, field: Field):
         self.fields.append(field)
-        self.allowedValues.addValue(field._value)   
+        self.ObserveValue(field._value)   
         self._nCols += 1
     def addFields(self, fields):
         for field in fields: 
             self.addField(field)
-    def IsAllowedValue(self, value):
-        return self.allowedValues.IsAllowedValue(value)
-    def GetAllowedValues(self):
-        return self.allowedValues.GetAllowedValues()
     def _GetIndex(self, field):
         if not field in self.fields:
             return SudokuConstants.INDEXNOTFOUND        
@@ -102,4 +104,5 @@ class Fields:
     @property
     def nRows(self)->int:
         return len(self.fields) // self.nCols
+
         

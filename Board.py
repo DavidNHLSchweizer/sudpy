@@ -8,7 +8,7 @@ class Board(Fields):
         self._init_Rows()
         self._init_Cols()
         self._init_Blocks()
-        self._updateFields()
+        self._initFieldDependencies()        
     def _init_fields(self):
         for _ in range(SudokuConstants.BOARDSIZE):            
             for _ in range(SudokuConstants.BOARDSIZE):
@@ -44,6 +44,13 @@ class Board(Fields):
                 Block.nCols = SudokuConstants.BLOCKSIZE
                 BlockRow.append(Block)
             self.Blocks.append(BlockRow)
+    def _initFieldDependencies(self):        
+        for field in self.fields:
+            row = self.fieldRow(field)
+            col = self.fieldCol(field)
+            field.Row = self.Row(row)
+            field.Column = self.Column(col)
+            field.Block = self.Block(row,col)    
     def Row(self, row):
         self._CheckLegal(row, 0)
         return self.Rows[row]
@@ -53,11 +60,5 @@ class Board(Fields):
     def Block(self, row, col):
         self._CheckLegal(row, col)
         return self.Blocks[row // SudokuConstants.BLOCKSIZE][col // SudokuConstants.BLOCKSIZE]
-    def _updateFields(self):
-        for field in self.fields:
-            row = self.fieldRow(field)
-            col = self.fieldCol(field)
-            field.Row = self.Row(row)
-            field.Column = self.Column(col)
-            field.Block = self.Block(row,col)
+
 

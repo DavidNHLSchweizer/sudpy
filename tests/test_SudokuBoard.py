@@ -1,6 +1,5 @@
 import pytest
 import SudokuConstants
-import SudokuBoard 
 from AllowedValues import AllowedValues
 from Value import Value
 from typing import List 
@@ -51,7 +50,7 @@ class TestAllowedValues:
             values.append(Value(i))
         for v in values:
             assert AV.IsAllowedValue(v.value) == True
-            AV.addValue(v)
+            AV.ObserveValue(v)
             assert AV.IsAllowedValue(v.value) == False
         # clear a Value, then assign the value to another Value
         testvalue = values[2].value

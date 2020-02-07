@@ -22,7 +22,7 @@ class AllowedValues(Observer):
         self._refCount[value] += 1
         if value in self._allowedValues:
             self._allowedValues.remove(value)
-    def addValue(self, value: Value):
+    def ObserveValue(self, value: Value):
         value.attach(self)
         self._removeValue(value.value)
     def update(self, subject: Value):
