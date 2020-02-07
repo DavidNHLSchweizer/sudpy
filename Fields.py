@@ -1,16 +1,6 @@
 import SudokuConstants
 from Value import Value
-from AllowedValues import AllowedValues
-
-class _AllowedValues:
-    def __init__(self):
-        self.allowedValues = AllowedValues()
-    def IsAllowedValue(self, value):
-        return self.allowedValues.IsAllowedValue(value)
-    def GetAllowedValues(self):
-        return self.allowedValues.GetAllowedValues()
-    def ObserveValue(self, value: Value):
-        self.allowedValues.ObserveValue(value)
+from AllowedValues import _AllowedValues
  
 class Field(_AllowedValues):
     def __init__(self, value = SudokuConstants.INITIAL):

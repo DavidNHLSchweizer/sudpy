@@ -33,3 +33,12 @@ class AllowedValues(Observer):
     def GetAllowedValues(self):
         return sorted(self._allowedValues)    
 
+class _AllowedValues:
+    def __init__(self):
+        self.allowedValues = AllowedValues()
+    def IsAllowedValue(self, value):
+        return self.allowedValues.IsAllowedValue(value)
+    def GetAllowedValues(self):
+        return self.allowedValues.GetAllowedValues()
+    def ObserveValue(self, value: Value):
+        self.allowedValues.ObserveValue(value)
