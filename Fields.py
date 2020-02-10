@@ -43,7 +43,11 @@ class Field(ContainsAllowedValues):
     @Block.setter
     def Block(self, blockFields):
         self._block = blockFields
-        self._addInfluencingFields(blockFields.fields)        
+        self._addInfluencingFields(blockFields.fields)
+    def fixValue(self):
+        self._value._fixedValue = True        
+    def unfixValue(self):
+        self._value._fixedValue = False        
     def clear(self):
         self._value.clear()
         

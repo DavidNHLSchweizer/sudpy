@@ -61,4 +61,3 @@ class Board(Fields):
         self._CheckLegal(row, col)
         return self.Blocks[row // SudokuConstants.BLOCKSIZE][col // SudokuConstants.BLOCKSIZE]
 
-
