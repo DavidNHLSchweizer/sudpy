@@ -1,1 +1,1 @@
-python -m pytest
+python -m pytest %1 %2 %3 %4 %5

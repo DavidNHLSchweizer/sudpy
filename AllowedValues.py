@@ -32,6 +32,8 @@ class AllowedValues(Observer):
         return value == SudokuConstants.INITIAL or value in self._allowedValues
     def GetAllowedValues(self):
         return sorted(self._allowedValues)    
+    def nrAllowedValues(self):
+        return len(self._allowedValues)
 
 class ContainsAllowedValues:
     def __init__(self):
@@ -40,5 +42,7 @@ class ContainsAllowedValues:
         return self.allowedValues.IsAllowedValue(value)
     def GetAllowedValues(self):
         return self.allowedValues.GetAllowedValues()
+    def nrAllowedValues(self):
+        return self.allowedValues.nrAllowedValues()
     def ObserveValue(self, value: Value):
         self.allowedValues.ObserveValue(value)

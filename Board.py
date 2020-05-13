@@ -1,5 +1,6 @@
-from Fields import Field, Fields
 import SudokuConstants
+from Field import Field
+from Fields import Fields
 
 class Board(Fields):
     def __init__(self):
@@ -44,20 +45,25 @@ class Board(Fields):
                 Block.nCols = SudokuConstants.BLOCKSIZE
                 BlockRow.append(Block)
             self.Blocks.append(BlockRow)
+    def _getBlock(self, row, col):
+        self._CheckLegal(row, col)
+        return self.Blocks[row // SudokuConstants.BLOCKSIZE][col // SudokuConstants.BLOCKSIZE]
     def _initFieldDependencies(self):        
         for field in self.fields:
             row = self.fieldRow(field)
             col = self.fieldCol(field)
             field.Row = self.Row(row)
             field.Column = self.Column(col)
-            field.Block = self.Block(row,col)    
+            field.Block = self._getBlock(row,col)    
     def Row(self, row):
         self._CheckLegal(row, 0)
         return self.Rows[row]
     def Column(self, col):
         self._CheckLegal(0, col)
         return self.Cols[col]
-    def Block(self, row, col):
-        self._CheckLegal(row, col)
-        return self.Blocks[row // SudokuConstants.BLOCKSIZE][col // SudokuConstants.BLOCKSIZE]
-
+    def Block(self, bRow, bCol):
+        self._CheckLegalBase(bRow, bCol, SudokuConstants.BLOCKSIZE, SudokuConstants.BLOCKSIZE)
+        return self.Blocks[bRow][bCol]
+    def clear(self):
+        for r in self.Rows:
+            r.clear()

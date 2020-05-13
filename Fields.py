@@ -1,56 +1,8 @@
 import SudokuConstants
 from Value import Value
 from AllowedValues import ContainsAllowedValues
- 
-class Field(ContainsAllowedValues):
-    def __init__(self, value = SudokuConstants.INITIAL):
-        super().__init__()
-        self._value = Value(value)
-        self._row    = None
-        self._column = None
-        self._block  = None
-    @property
-    def value(self):
-        return self._value.value
-    @value.setter
-    def value(self, newvalue):
-        self._value.value = newvalue
-    def _addInfluencingFields(self, fields):        
-        if len(fields) != SudokuConstants.BOARDSIZE:
-            raise SudokuConstants.INVALIDFIELDSEXCEPTION
-        if not self in fields:
-            raise SudokuConstants.INVALIDFIELDSEXCEPTION2
-        for field in fields:
-            if field != self:
-                self.ObserveValue(field._value)
-    @property
-    def Row(self):
-        return self._row
-    @Row.setter
-    def Row(self, rowFields):
-        self._row = rowFields
-        self._addInfluencingFields(rowFields.fields)        
-    @property
-    def Column(self):
-        return self._column
-    @Column.setter
-    def Column(self, columnFields):
-        self._column = columnFields
-        self._addInfluencingFields(columnFields.fields)        
-    @property
-    def Block(self):
-        return self._block
-    @Block.setter
-    def Block(self, blockFields):
-        self._block = blockFields
-        self._addInfluencingFields(blockFields.fields)
-    def fixValue(self):
-        self._value._fixedValue = True        
-    def unfixValue(self):
-        self._value._fixedValue = False        
-    def clear(self):
-        self._value.clear()
-        
+from Field import Field
+
 class Fields(ContainsAllowedValues):
     def __init__(self):
         super().__init__()
@@ -75,14 +27,19 @@ class Fields(ContainsAllowedValues):
         return index // self.nCols
     def _IndexToCol(self, index):
         return index % self.nCols
-    def _CheckLegal(self, row, col):
-        if row < 0 or row >= self.nRows:
+    def _CheckLegalBase(self, row, col, maxRows, maxCols):
+        if row < 0 or row >= maxRows:
             ValueError(SudokuConstants.INVALIDROWSEXCEPTION + ' {}'.format(row))
-        if col < 0 or col >= self.nCols:
+        if col < 0 or col >= maxCols:
             ValueError(SudokuConstants.INVALIDCOLSEXCEPTION + ' {}'.format(col))
+    def _CheckLegal(self, row, col):
+        self._CheckLegalBase(row, col, self.nRows, self.nCols)
     def field(self, row, col):
         self._CheckLegal(row, col)
         return self.fields[self._RowColToIndex(row, col)]
+    def clear(self):
+        for f in self.fields:
+            f.clear()
     def fieldRow(self, field):
         return self._IndexToRow(self._GetIndex(field))
     def fieldCol(self, field):
@@ -98,5 +55,15 @@ class Fields(ContainsAllowedValues):
     @property
     def nRows(self)->int:
         return len(self.fields) // self.nCols
-
-        
+    def asString(self):
+        result = ''
+        for r in range(self.nRows):
+            for c in range(self.nCols):
+                field = self.field(r, c)
+                result = result + ('0' if field.value == SudokuConstants.INITIAL else str(field.value))
+                if c % 3 == 2:
+                    result = result + ' '
+                if r < self.nRows-1 and c == self.nCols-1:
+                    result = result + '\n'
+        return result
+    
