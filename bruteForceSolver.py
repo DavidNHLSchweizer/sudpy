@@ -1,54 +1,83 @@
-import SudokuConstants
-from Fields import FieldsValidator
-from Board import Board, BoardValidator
-from BoardImporter import BoardImporter, BoardDumper
+import SudokuConstants as SCS
+from Validators import FieldsValidator, BoardValidator
+from Board import Board
+from BoardImporter import BoardImporterFromArray, BoardImporterFromFile
+from BoardExporter import BoardExporterToString
 import logging
+from stopwatch import Stopwatch
 
 NOROWFOUND = -1
 class BruteForceSolver:
     def __init__(self):
-        self.boardDumper = BoardDumper()
-    def findBestRowToDoRecursion(self, board):
-        result = NOROWFOUND
-        curBest = SudokuConstants.BOARDSIZE+1
-        for r in range(SudokuConstants.BOARDSIZE):
-            n = FieldsValidator(board.Row(r)).nrFieldValues()
-            if n > 0 and n < curBest:
-                curBest = n
-                result = r        
+        self._fieldsValidator = FieldsValidator()
+        self.stopwatch = Stopwatch()
+        self.validator = BoardValidator()
+
+    def findBestFieldToTryNext(self, board):
+        # find the open field with the minimum values possible
+        result = None
+        curBest = SCS.BOARDSIZE + 1
+        for r in range(SCS.BOARDSIZE):
+            for c in range(SCS.BOARDSIZE):
+                field = board.field(r,c)
+                if not SCS.IsClear(field.value):
+                    continue
+                n = field.nrAllowedValues()
+                if n == 0:
+                    return None # no solution possible in this branch
+                elif n == 1: 
+                    return field # no reason to search any further
+                elif n < curBest:
+                    curBest = n
+                    result = field
         return result
+
     def Solve(self, board, depth)->bool:
-        BV = BoardValidator(board)
-        logging.info('call to Solve {} (filled: {})'.format(depth, BV.nrFilledValues()))
-        self.boardDumper.dumpFile(board, "boards.log", "a")
-        if BV.IsCompleteValues():
+        logging.info('call to Solve [{}] (filled: {})'.format(depth, self.validator.nrFieldsWithValues(board)))
+        if self.validator.IsCompleteValues(board) and self.validator.IsValidValues(board):
             return True
-        r = self.findBestRowToDoRecursion(board)
-        if r == NOROWFOUND:
+        field = self.findBestFieldToTryNext(board)
+        if field == None:
+            logging.info('stuck...')
             return False
-        logging.debug('ROW '+str(r))
-        for c in range(SudokuConstants.BOARDSIZE):
-            field = board.field(r, c)
-            logging.debug('col '+str(c))
-            if field.value == SudokuConstants.INITIAL:
-                values = field.GetAllowedValues()
-                for v in values:
-                    logging.debug('value '+str(v))
-                    field.value = v
-                    if self.Solve(board, depth+1):
-                        return True
-                    logging.info('backtrack ({} {}) - {}'.format(r,c,v))
-                    field.value = SudokuConstants.INITIAL
+        values = field.GetAllowedValues()
+        for v in values:            
+            logging.info('field: ({},{}) possible values: {} try {}'.format(board.fieldRow(field), board.fieldCol(field), field.GetAllowedValues(), v))
+            field.value = v
+            if self.Solve(board, depth+1):
+                return True
+            else:
+                logging.info('backtrack [{}]'.format(depth))
+                field.value = SCS.INITIAL
         return False
 
-logging.basicConfig(filename='suko.log', level =logging.DEBUG)
-filename = r'.\sudfiles\TEST5.txt'
-I = BoardImporter(filename)
-
+    def SolveWithTiming(self, board):
+        self.stopwatch.reset()
+        self.stopwatch.start()
+        result = self.Solve(board, 0)
+        self.stopwatch.stop()  
+        return result      
+    
+    def SolveTime(self):
+        return str(self.stopwatch)
+        
+logging.basicConfig(filename='suko.log', filemode = 'w',level =logging.DEBUG, format='%(message)s')
+filename = r'.\sudfiles\test9B.txt'
+board = BoardImporterFromFile(filename).board
+# board = BoardImporterFromArray([
+#                             "178 236 495", 
+#                             "359 174 268", 
+#                             "264 000 713",
+#                             "745 612 389", 
+#                             "813 450 627", 
+#                             "926 783 154", 
+#                             "001 325 900", 
+#                             "532 967 841", 
+#                             "697 841 532"]).board
 Solver = BruteForceSolver()
-if Solver.Solve(I.board, 0):
-    logging.info('solved!')
-    B = BoardDumper()
-    B.dumpFile(I.board, filename + '.exp')
+logging.info('\n'+BoardExporterToString().BoardAsString(board))
+if Solver.SolveWithTiming(board):
+    logging.info('solved! ({})'.format(Solver.SolveTime()))
+    logging.info('\n'+BoardExporterToString().BoardAsString(board))
 else:
-    logging.info('no solve')
+    logging.info('NO SOLUTION FOUND ({})'.format(Solver.SolveTime()))
