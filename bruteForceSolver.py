@@ -11,6 +11,7 @@ class BruteForceSolver:
         self._fieldsValidator = FieldsValidator()
         self.stopwatch = Stopwatch()
         self.validator = BoardValidator()
+        self.nPass = 0
 
     def findBestFieldToTryNext(self, board):
         # find the open field with the minimum values possible
@@ -32,7 +33,10 @@ class BruteForceSolver:
         return result
 
     def Solve(self, board, depth)->bool:
-        logging.info('call to Solve [{}] (filled: {})'.format(depth, self.validator.nrFieldsWithValues(board)))
+        self.nPass += 1
+        logging.info('call to Solve [{}, {}] (filled: {})'.format(self.nPass, depth, self.validator.nrFieldsWithValues(board)))
+        if self.nPass % 1024 == 0:
+            print('.', end = '')
         if self.validator.IsCompleteValues(board) and self.validator.IsValidValues(board):
             return True
         field = self.findBestFieldToTryNext(board)
@@ -77,7 +81,7 @@ Solver = BruteForceSolver()
 print("\nsolving:\n" + BoardExporterToString().BoardAsString(board))
 logging.info('\n'+BoardExporterToString().BoardAsString(board))
 if Solver.SolveWithTiming(board):
-    print('solved! ({})\n\n'.format(Solver.SolveTime())+BoardExporterToString().BoardAsString(board))
+    print('\nsolved! ({})\n\n'.format(Solver.SolveTime())+BoardExporterToString().BoardAsString(board))
     logging.info('solved! ({})'.format(Solver.SolveTime()))
     logging.info('\n'+BoardExporterToString().BoardAsString(board))
 else:
