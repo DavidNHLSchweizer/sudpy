@@ -6,7 +6,6 @@ from BoardExporter import BoardExporterToString
 import logging
 from stopwatch import Stopwatch
 
-NOROWFOUND = -1
 class BruteForceSolver:
     def __init__(self):
         self._fieldsValidator = FieldsValidator()
@@ -62,7 +61,7 @@ class BruteForceSolver:
         return str(self.stopwatch)
         
 logging.basicConfig(filename='suko.log', filemode = 'w',level =logging.DEBUG, format='%(message)s')
-filename = r'.\sudfiles\test9B.txt'
+filename = r'.\sudfiles\test10.txt'
 board = BoardImporterFromFile(filename).board
 # board = BoardImporterFromArray([
 #                             "178 236 495", 
@@ -75,8 +74,10 @@ board = BoardImporterFromFile(filename).board
 #                             "532 967 841", 
 #                             "697 841 532"]).board
 Solver = BruteForceSolver()
+print("\nsolving:\n" + BoardExporterToString().BoardAsString(board))
 logging.info('\n'+BoardExporterToString().BoardAsString(board))
 if Solver.SolveWithTiming(board):
+    print('solved! ({})\n\n'.format(Solver.SolveTime())+BoardExporterToString().BoardAsString(board))
     logging.info('solved! ({})'.format(Solver.SolveTime()))
     logging.info('\n'+BoardExporterToString().BoardAsString(board))
 else:

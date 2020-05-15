@@ -1,16 +1,13 @@
 import SudokuConstants
 from Value import Value
-from AllowedValues import ContainsAllowedValues
 from Field import Field
 
-class Fields(ContainsAllowedValues):
+class Fields:
     def __init__(self):
-        super().__init__()
         self.fields = []
         self._nCols = 0
     def addField(self, field: Field):
         self.fields.append(field)
-        self.ObserveValue(field._value)   
         self._nCols += 1
     def addFields(self, fields):
         for field in fields: 
@@ -55,6 +52,9 @@ class Fields(ContainsAllowedValues):
     @property
     def nRows(self)->int:
         return len(self.fields) // self.nCols
+    @property
+    def nFields(self)->int:
+        return len(self.fields)
     def asString(self):
         result = ''
         for r in range(self.nRows):

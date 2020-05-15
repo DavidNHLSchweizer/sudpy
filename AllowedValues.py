@@ -25,6 +25,9 @@ class AllowedValues(Observer):
     def ObserveValue(self, value: Value):
         value.attach(self)
         self._removeValue(value.value)
+    def StopObserveValue(self, value: Value):
+        self._addValue(value.value)
+        value.detach(self)
     def update(self, subject: Value):
         self._addValue(subject.oldvalue)
         self._removeValue(subject.value)
