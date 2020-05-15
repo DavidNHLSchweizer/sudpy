@@ -1,8 +1,8 @@
 import random
-import SudokuConstants
-from Board import Board, BoardValidator
-from Fields import FieldsValidator
-from BoardImporter import BoardDumper
+import SudokuConstants as SCS
+from Board import Board
+from Validators import FieldsValidator
+from BoardExporter import BoardExporterToTextFile
 
 class RandomBoard:
     def  __init__(self, pctfilled, isValid):
@@ -11,34 +11,32 @@ class RandomBoard:
     
     def GenerateFieldValue(self, pctfilled, allowedValues):
         if len(allowedValues) == 0:
-            return SudokuConstants.INITIAL
+            return SCS.INITIAL
         if random.random() > pctfilled:
-            return SudokuConstants.INITIAL
+            return SCS.INITIAL
         Try = 0
         while True:
-            value = 1 + random.randrange(SudokuConstants.BOARDSIZE)
+            value = 1 + random.randrange(SCS.BOARDSIZE)
             if value in allowedValues:
                 return value
             elif Try > 42:
-                return SudokuConstants.INITIAL
+                return SCS.INITIAL
             else:
                 Try +=1
 
     def Generate(self, pctfilled, isValid):
         self.board.clear()
-        for r in range(SudokuConstants.BOARDSIZE):
-            for c in range(SudokuConstants.BOARDSIZE):
+        for r in range(SCS.BOARDSIZE):
+            for c in range(SCS.BOARDSIZE):
                 field = self.board.field(r,c)
                 value = self.GenerateFieldValue(pctfilled, field.GetAllowedValues())
                 field.value = value
 
     def dumpFile(self, filename):
-        bd = BoardDumper()
-        bd.dumpFile(self.board, filename)
+        bd = BoardExporterToTextFile()
+        bd.PrintBoardAsText(self.board, filename)
     
 RB = RandomBoard(0.50, False)
 RB.dumpFile("./dumping.dmp")
-BV = BoardValidator(RB.board)
-print()
 
 

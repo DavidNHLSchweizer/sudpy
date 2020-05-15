@@ -1,12 +1,12 @@
 import pytest
-import SudokuConstants
+import SudokuConstants as SCS
 from AllowedValues import AllowedValues
 from Value import Value
 
 class TestAllowedValues:
     def _get_values(self, allowedValues=None, initialize=True):
         values = []
-        for i in range(SudokuConstants.BOARDSIZE):
+        for i in range(SCS.BOARDSIZE):
             if initialize:
                 v = Value(i+1)
             else:
@@ -22,15 +22,15 @@ class TestAllowedValues:
 
     def test_allowedValues_initial(self):
         AV = AllowedValues()
-        for i in range(1,SudokuConstants.BOARDSIZE+1):
+        for i in range(1,SCS.BOARDSIZE+1):
             self._testAllowed(AV, i, True)
-        assert AV.nrAllowedValues() == SudokuConstants.BOARDSIZE
+        assert AV.nrAllowedValues() == SCS.BOARDSIZE
 
     def test_allowedValues_observe(self):
         AV = AllowedValues()
         values = self._get_values()
         n = AV.nrAllowedValues()
-        assert n == SudokuConstants.BOARDSIZE
+        assert n == SCS.BOARDSIZE
         for v in values:                        
             self._testAllowed(AV, v.value, True)
             AV.ObserveValue(v)
@@ -110,7 +110,7 @@ class TestAllowedValues:
         AV = AllowedValues()
         self._get_values(AV, False)
         av = AV.GetAllowedValues()
-        assert len(av) == SudokuConstants.BOARDSIZE
+        assert len(av) == SCS.BOARDSIZE
         prev = av[0]
         for i in range(1, len(av)):
             assert av[i] > prev

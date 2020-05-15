@@ -1,4 +1,4 @@
-import SudokuConstants
+import SudokuConstants as SCS
 from Value import Value
 from Field import Field
 
@@ -14,7 +14,7 @@ class Fields:
             self.addField(field)
     def _GetIndex(self, field):
         if not field in self.fields:
-            return SudokuConstants.INDEXNOTFOUND        
+            return SCS.INDEXNOTFOUND        
         return self.fields.index(field)
     def _Contains(self, field):
         return field in self.fields
@@ -26,9 +26,9 @@ class Fields:
         return index % self.nCols
     def _CheckLegalBase(self, row, col, maxRows, maxCols):
         if row < 0 or row >= maxRows:
-            ValueError(SudokuConstants.INVALIDROWSEXCEPTION + ' {}'.format(row))
+            ValueError(SCS.INVALIDROWSEXCEPTION + ' {}'.format(row))
         if col < 0 or col >= maxCols:
-            ValueError(SudokuConstants.INVALIDCOLSEXCEPTION + ' {}'.format(col))
+            ValueError(SCS.INVALIDCOLSEXCEPTION + ' {}'.format(col))
     def _CheckLegal(self, row, col):
         self._CheckLegalBase(row, col, self.nRows, self.nCols)
     def field(self, row, col):
@@ -47,7 +47,7 @@ class Fields:
     @nCols.setter
     def nCols(self, value):
         if value <= 0 or value > len(self.fields) or len(self.fields) % value != 0:
-            raise ValueError(SudokuConstants.INVALIDCOLSEXCEPTION + ' {}'.format(value))
+            raise ValueError(SCS.INVALIDCOLSEXCEPTION + ' {}'.format(value))
         self._nCols = value
     @property
     def nRows(self)->int:
@@ -60,7 +60,7 @@ class Fields:
         for r in range(self.nRows):
             for c in range(self.nCols):
                 field = self.field(r, c)
-                result = result + ('0' if field.value == SudokuConstants.INITIAL else str(field.value))
+                result = result + ('0' if field.value == SCS.INITIAL else str(field.value))
                 if c % 3 == 2:
                     result = result + ' '
                 if r < self.nRows-1 and c == self.nCols-1:

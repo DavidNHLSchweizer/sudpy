@@ -1,4 +1,4 @@
-import SudokuConstants
+import SudokuConstants as SCS
 import re
 from Board import Board
 from BoardExporter import BoardExporter
@@ -91,11 +91,11 @@ class BoardImporterFromArray(BoardImporter):
 #                             "000 325 006",
 #                             "000 000 000",
 #                             "000 000 000"]).board
-# # for r in range(SudokuConstants.BOARDSIZE):
+# # for r in range(SCS.BOARDSIZE):
 # #     print(Board.Row(r).asString())
 # print(Board.asString())
 # print('---')
-# for r in range(SudokuConstants.BLOCKSIZE):
-#     for c in range(SudokuConstants.BLOCKSIZE):
+# for r in range(SCS.BLOCKSIZE):
+#     for c in range(SCS.BLOCKSIZE):
 #         print('block: [{}, {}]\n{}'.format(r,c, Board.Block(r,c).asString()))
 

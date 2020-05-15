@@ -1,11 +1,11 @@
-import SudokuConstants
+import SudokuConstants as SCS
 
 class BoardExporter:
     def _getLineFromBoard(self, board, row):
         line = ''
-        for col in range(SudokuConstants.BOARDSIZE):
+        for col in range(SCS.BOARDSIZE):
             field = board.field(row,col)
-            line = line + ('0' if field.value == SudokuConstants.INITIAL else str(field.value))
+            line = line + ('0' if field.value == SCS.INITIAL else str(field.value))
             if col % 3 == 2:
                 line = line + ' '
         return line
@@ -13,7 +13,7 @@ class BoardExporter:
 class BoardExporterToTextFile(BoardExporter):
     def PrintBoardAsText(self, board, filename, mode = "w"):
         with(open(filename, mode)) as fileHandler:
-            for row in range(SudokuConstants.BOARDSIZE):            
+            for row in range(SCS.BOARDSIZE):            
                 line = self._getLineFromBoard(board, row)
                 if line:
                     fileHandler.write(line+'\n')
@@ -22,6 +22,6 @@ class BoardExporterToTextFile(BoardExporter):
 class BoardExporterToString(BoardExporter):
     def BoardAsString(self, board):
         result = ''
-        for row in range(SudokuConstants.BOARDSIZE):            
+        for row in range(SCS.BOARDSIZE):            
             result = result + self._getLineFromBoard(board, row) + '\n'
         return result

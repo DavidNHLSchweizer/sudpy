@@ -1,4 +1,4 @@
-import SudokuConstants
+import SudokuConstants as SCS
 from Field import Field
 from Fields import Fields
 from Board import Board
@@ -8,19 +8,19 @@ from BoardImporter import BoardImporterFromArray
 class TestFieldsValidator:
     def _initFields(self, nCols):
         fields = Fields()
-        for _ in range(SudokuConstants.BOARDSIZE):
+        for _ in range(SCS.BOARDSIZE):
             fields.addField(Field())
         fields.nCols = nCols        
         return fields
 
     def test_initial(self):
-        fields = self._initFields(SudokuConstants.BOARDSIZE)
+        fields = self._initFields(SCS.BOARDSIZE)
         FV = FieldsValidator()
         assert FV.nrFieldsWithValues(fields) == 0
         assert FV.IsCompleteValues(fields) == False
         assert FV.IsValidValues(fields) == True
     def test_one_value(self):
-        fields = self._initFields(SudokuConstants.BOARDSIZE)
+        fields = self._initFields(SCS.BOARDSIZE)
         FV = FieldsValidator()
         field = fields.fields[0]
         field.value = 1
@@ -28,67 +28,67 @@ class TestFieldsValidator:
         assert FV.IsCompleteValues(fields) == False
         assert FV.IsValidValues(fields) == True
     def test_two_values_valid(self):
-        fields = self._initFields(SudokuConstants.BOARDSIZE)
+        fields = self._initFields(SCS.BOARDSIZE)
         FV = FieldsValidator()
         fields.fields[0].value = 1
-        fields.fields[SudokuConstants.BOARDSIZE-1].value = 2
+        fields.fields[SCS.BOARDSIZE-1].value = 2
         assert FV.nrFieldsWithValues(fields) == 2
         assert FV.IsCompleteValues(fields) == False
         assert FV.IsValidValues(fields) == True
     def test_two_values_invalid(self):
-        fields = self._initFields(SudokuConstants.BOARDSIZE)
+        fields = self._initFields(SCS.BOARDSIZE)
         FV = FieldsValidator()
         fields.fields[0].value = 1
-        fields.fields[SudokuConstants.BOARDSIZE-1].value = 1
+        fields.fields[SCS.BOARDSIZE-1].value = 1
         assert FV.nrFieldsWithValues(fields) == 2
         assert FV.IsCompleteValues(fields) == False
         assert FV.IsValidValues(fields) == False
     def test_full_values_valid(self):
-        fields = self._initFields(SudokuConstants.BOARDSIZE)
+        fields = self._initFields(SCS.BOARDSIZE)
         FV = FieldsValidator()
-        for i in range(SudokuConstants.BOARDSIZE):
+        for i in range(SCS.BOARDSIZE):
             fields.fields[i].value = i+1
-        assert FV.nrFieldsWithValues(fields) == SudokuConstants.BOARDSIZE
+        assert FV.nrFieldsWithValues(fields) == SCS.BOARDSIZE
         assert FV.IsCompleteValues(fields) == True
         assert FV.IsValidValues(fields) == True
     def test_full_values_invalid(self):
-        fields = self._initFields(SudokuConstants.BOARDSIZE)
+        fields = self._initFields(SCS.BOARDSIZE)
         FV = FieldsValidator()
-        for i in range(SudokuConstants.BOARDSIZE):
+        for i in range(SCS.BOARDSIZE):
             fields.fields[i].value = 3
-        assert FV.nrFieldsWithValues(fields) == SudokuConstants.BOARDSIZE
+        assert FV.nrFieldsWithValues(fields) == SCS.BOARDSIZE
         assert FV.IsCompleteValues(fields) == True
         assert FV.IsValidValues(fields) == False
     def test_full_values_invalid2(self):
-        fields = self._initFields(SudokuConstants.BOARDSIZE)
+        fields = self._initFields(SCS.BOARDSIZE)
         FV = FieldsValidator()
-        for i in range(SudokuConstants.BOARDSIZE):
+        for i in range(SCS.BOARDSIZE):
             fields.fields[i].value = i+1
         fields.fields[3].value = 1
-        assert FV.nrFieldsWithValues(fields) == SudokuConstants.BOARDSIZE
+        assert FV.nrFieldsWithValues(fields) == SCS.BOARDSIZE
         assert FV.IsCompleteValues(fields) == True
         assert FV.IsValidValues(fields) == False
     def test_some_values_valid(self):
-        fields = self._initFields(SudokuConstants.BOARDSIZE)
+        fields = self._initFields(SCS.BOARDSIZE)
         FV = FieldsValidator()
-        for i in range(SudokuConstants.BOARDSIZE):
+        for i in range(SCS.BOARDSIZE):
             fields.fields[i].value = i+1
-        fields.fields[3].value = SudokuConstants.INITIAL
-        assert FV.nrFieldsWithValues(fields) == SudokuConstants.BOARDSIZE-1
+        fields.fields[3].value = SCS.INITIAL
+        assert FV.nrFieldsWithValues(fields) == SCS.BOARDSIZE-1
         assert FV.IsCompleteValues(fields) == False
         assert FV.IsValidValues(fields) == True
     def test_some_values_invalid(self):
-        fields = self._initFields(SudokuConstants.BOARDSIZE)
+        fields = self._initFields(SCS.BOARDSIZE)
         FV = FieldsValidator()
-        for i in range(SudokuConstants.BOARDSIZE):
+        for i in range(SCS.BOARDSIZE):
             fields.fields[i].value = i+1
-        fields.fields[3].value = SudokuConstants.INITIAL
+        fields.fields[3].value = SCS.INITIAL
         fields.fields[6].value = fields.fields[4].value
-        assert FV.nrFieldsWithValues(fields) == SudokuConstants.BOARDSIZE-1
+        assert FV.nrFieldsWithValues(fields) == SCS.BOARDSIZE-1
         assert FV.IsCompleteValues(fields) == False
         assert FV.IsValidValues(fields) == False
     def test_block_some_values_invalid(self):
-        fields = self._initFields(SudokuConstants.BLOCKSIZE)
+        fields = self._initFields(SCS.BLOCKSIZE)
         FV = FieldsValidator()
         fields.fields[3].value = 2
         fields.fields[6].value = 2
@@ -115,7 +115,7 @@ class TestBoardsValidator:
                             "532 967 841", 
                             "697 841 532"]).board
         BV = BoardValidator()
-        assert BV.nrFieldsWithValues(board) == SudokuConstants.BOARDSIZE * SudokuConstants.BOARDSIZE
+        assert BV.nrFieldsWithValues(board) == SCS.BOARDSIZE * SCS.BOARDSIZE
         assert BV.IsCompleteValues(board) == True
         assert BV.IsValidValues(board) == True
     def test_complete_invalid_board(self):
@@ -130,7 +130,7 @@ class TestBoardsValidator:
                             "532 967 841", 
                             "697 841 532"]).board
         BV = BoardValidator()
-        assert BV.nrFieldsWithValues(board) == SudokuConstants.BOARDSIZE * SudokuConstants.BOARDSIZE
+        assert BV.nrFieldsWithValues(board) == SCS.BOARDSIZE * SCS.BOARDSIZE
         assert BV.IsCompleteValues(board) == True
         assert BV.IsValidValues(board) == False
     def test_incomplete_valid_board(self):
@@ -145,7 +145,7 @@ class TestBoardsValidator:
                             "532 967 841", 
                             "697 841 532"]).board
         BV = BoardValidator()
-        assert BV.nrFieldsWithValues(board) == SudokuConstants.BOARDSIZE * SudokuConstants.BOARDSIZE-1
+        assert BV.nrFieldsWithValues(board) == SCS.BOARDSIZE * SCS.BOARDSIZE-1
         assert BV.IsCompleteValues(board) == False
         assert BV.IsValidValues(board) == True
     def test_incomplete_valid_board2(self):

@@ -1,17 +1,17 @@
-import SudokuConstants
+import SudokuConstants as SCS
 from abc import abstractmethod
 from observerPattern import SimpleSubject, Observer
 
 class Value(SimpleSubject):
-    def __init__(self, value=SudokuConstants.INITIAL, fixedValue = False):
+    def __init__(self, value=SCS.INITIAL, fixedValue = False):
         super().__init__()
         self._checkLegalValue(value)
         self._value = value
-        self._oldvalue = SudokuConstants.INITIAL
+        self._oldvalue = SCS.INITIAL
         self._fixedValue = fixedValue 
     def _checkLegalValue(self, value):
-        if not (SudokuConstants.IsClear(value) or (value >= 1 and value <= SudokuConstants.BOARDSIZE)):
-            raise ValueError(SudokuConstants.INVALIDVALUEEXCEPTION + ' {}'.format(value))        
+        if not (SCS.IsClear(value) or (value >= 1 and value <= SCS.BOARDSIZE)):
+            raise ValueError(SCS.INVALIDVALUEEXCEPTION + ' {}'.format(value))        
     @property
     def value(self):
         return self._value
@@ -24,8 +24,8 @@ class Value(SimpleSubject):
         self._value = newvalue
         self.notify()
     def clear(self):
-        self.value = SudokuConstants.INITIAL
-        self._oldvalue = SudokuConstants.INITIAL
+        self.value = SCS.INITIAL
+        self._oldvalue = SCS.INITIAL
     @property
     def oldvalue(self):
         return self._oldvalue

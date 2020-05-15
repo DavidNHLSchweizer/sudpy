@@ -1,9 +1,9 @@
-import SudokuConstants
+import SudokuConstants as SCS
 from Value import Value
 from AllowedValues import ContainsAllowedValues
  
 class Field(ContainsAllowedValues):
-    def __init__(self, value = SudokuConstants.INITIAL):
+    def __init__(self, value = SCS.INITIAL):
         super().__init__()
         self._value = Value(value)
         self._row    = None
@@ -16,10 +16,10 @@ class Field(ContainsAllowedValues):
     def value(self, newvalue):
         self._value.value = newvalue
     def _addInfluencingFields(self, fields):        
-        if len(fields) != SudokuConstants.BOARDSIZE:
-            raise SudokuConstants.INVALIDFIELDSEXCEPTION
+        if len(fields) != SCS.BOARDSIZE:
+            raise SCS.INVALIDFIELDSEXCEPTION
         if not self in fields:
-            raise SudokuConstants.INVALIDFIELDSEXCEPTION2
+            raise SCS.INVALIDFIELDSEXCEPTION2
         for field in fields:
             if field != self:
                 self.ObserveValue(field._value)

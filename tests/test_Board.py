@@ -1,5 +1,5 @@
 import pytest
-import SudokuConstants
+import SudokuConstants as SCS
 from AllowedValues import AllowedValues
 from Value import Value
 from Field import Field
@@ -9,50 +9,50 @@ from Board import Board
 class TestBoardInitialization:
     def test_board_size(self):        
         board = Board()
-        assert board.nRows == SudokuConstants.BOARDSIZE
-        assert board.nCols == SudokuConstants.BOARDSIZE
+        assert board.nRows == SCS.BOARDSIZE
+        assert board.nCols == SCS.BOARDSIZE
 
     def test_board_rows(self):
         board = Board()
-        for r in range(SudokuConstants.BOARDSIZE):
-            for c in range(SudokuConstants.BOARDSIZE):
+        for r in range(SCS.BOARDSIZE):
+            for c in range(SCS.BOARDSIZE):
                 field = board.field(r,c)
                 row = field.Row
-                assert row.nCols == SudokuConstants.BOARDSIZE
+                assert row.nCols == SCS.BOARDSIZE
                 assert row.nRows == 1
                 assert row._Contains(field)
-                for c2 in range(SudokuConstants.BOARDSIZE):
+                for c2 in range(SCS.BOARDSIZE):
                     if c2 != c:
                         assert row._Contains(board.field(r, c2)) 
 
     def test_board_columns(self):
         board = Board()        
-        for r in range(SudokuConstants.BOARDSIZE):
-            for c in range(SudokuConstants.BOARDSIZE):
+        for r in range(SCS.BOARDSIZE):
+            for c in range(SCS.BOARDSIZE):
                 field = board.field(r,c)
                 col = field.Column
-                assert col.nRows == SudokuConstants.BOARDSIZE
+                assert col.nRows == SCS.BOARDSIZE
                 assert col.nCols == 1
                 assert col._Contains(field)
-                for r2 in range(SudokuConstants.BOARDSIZE):
+                for r2 in range(SCS.BOARDSIZE):
                     if r2 != r:
                         assert col._Contains(board.field(r2, c))
     
     def test_board_block(self):
         board = Board()
-        for r in range(SudokuConstants.BOARDSIZE):
-            for c in range(SudokuConstants.BOARDSIZE):
+        for r in range(SCS.BOARDSIZE):
+            for c in range(SCS.BOARDSIZE):
                 field = board.field(r,c)
                 blk = field.Block
-                assert blk.nRows == SudokuConstants.BLOCKSIZE
-                assert blk.nCols == SudokuConstants.BLOCKSIZE
+                assert blk.nRows == SCS.BLOCKSIZE
+                assert blk.nCols == SCS.BLOCKSIZE
                 assert blk._Contains(field)
                 assert board.fieldRow(field) == r
                 assert board.fieldCol(field) == c                
-                r0 = (r // SudokuConstants.BLOCKSIZE) * SudokuConstants.BLOCKSIZE
-                c0 = (c // SudokuConstants.BLOCKSIZE) * SudokuConstants.BLOCKSIZE
-                for r2 in range(r0, r0 + SudokuConstants.BLOCKSIZE):
-                    for c2 in range(c0, c0 + SudokuConstants.BLOCKSIZE):
+                r0 = (r // SCS.BLOCKSIZE) * SCS.BLOCKSIZE
+                c0 = (c // SCS.BLOCKSIZE) * SCS.BLOCKSIZE
+                for r2 in range(r0, r0 + SCS.BLOCKSIZE):
+                    for c2 in range(c0, c0 + SCS.BLOCKSIZE):
                         if r2 != r or c2 != c:
                             assert blk._Contains(board.field(r2, c2))
 
@@ -64,7 +64,7 @@ class TestBoardInitialization:
     def test_board_allowed_values_initial(self):
         board = Board()
         for field in board.fields:
-            assert len(field.GetAllowedValues()) == SudokuConstants.BOARDSIZE
+            assert len(field.GetAllowedValues()) == SCS.BOARDSIZE
 
     def test_board_allowed_values_rowcolblk(self):
         board = Board()
