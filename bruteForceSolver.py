@@ -5,6 +5,53 @@ from BoardImporter import BoardImporterFromArray, BoardImporterFromFile
 from BoardExporter import BoardExporterToString
 import logging
 from stopwatch import Stopwatch
+from enum import Enum
+
+class Reporter:
+    class ReportType(Enum):
+        START       = 0   
+        STARTSOLVE  = 1
+        STUCK       = 2
+        NEWVALUE    = 3
+        BACKTRACK   = 4
+        ENDFALSE    = 41
+        ENDTRUE     = 42
+
+    def Report(self, rType: ReportType, data = None):
+        pass
+
+class SimpleReporter(Reporter):
+    def __init__(self, logfilename):
+        logging.basicConfig(filename=logfilename, filemode = 'w',level =logging.DEBUG, 
+            format='%(message)s')
+        self.Modulo = 1024
+
+    def Report(self, rType: Reporter.ReportType, data = None):
+        if rType == Reporter.ReportType.START:
+            start = '\nsolving:\n' + data['board']
+            print(start)
+            logging.info(start)
+        elif rType == Reporter.ReportType.STARTSOLVE:
+            if data['nPass'] % self.Modulo == 0:
+                print('.', end = '', flush=True)
+            logging.info('call to Solve [{}, {}] (filled: {})'.format(data['nPass'], data['depth'], data['filled']))
+        elif rType == Reporter.ReportType.STUCK:
+            logging.info('stuck...')
+        elif rType == Reporter.ReportType.NEWVALUE:
+            logging.info('field: ({},{}) possible values: {} try {}'.format(data['row'], data['col'], data['values'], data['value']))
+        elif rType == Reporter.ReportType.BACKTRACK:
+            logging.info('backtrack [{}]'.format(data['depth'])) 
+        elif rType == Reporter.ReportType.ENDFALSE:
+            logging.info('end (false)')
+            bah = '\nNO SOLUTION FOUND! ({})\n'.format(data['time'])
+            logging.info(bah)
+            print(bah)
+        elif rType == Reporter.ReportType.ENDTRUE:
+            hoera = '\nsolved! ({})\n\n{}'.format(data['time'], data['board'])
+            logging.info(hoera)
+            print(hoera)
+        else:
+            pass
 
 class BruteForceSolver:
     def __init__(self):
@@ -32,57 +79,42 @@ class BruteForceSolver:
                     result = field
         return result
 
-    def Solve(self, board, depth)->bool:
+    def Solve(self, board, depth, reporter=Reporter())->bool:
         self.nPass += 1
-        logging.info('call to Solve [{}, {}] (filled: {})'.format(self.nPass, depth, self.validator.nrFieldsWithValues(board)))
-        if self.nPass % 1024 == 0:
-            print('.', end = '')
+        reporter.Report(Reporter.ReportType.STARTSOLVE, {'nPass':self.nPass, 'depth':depth, 'filled':self.validator.nrFieldsWithValues(board)})
         if self.validator.IsCompleteValues(board) and self.validator.IsValidValues(board):
             return True
         field = self.findBestFieldToTryNext(board)
         if field == None:
-            logging.info('stuck...')
+            reporter.Report(Reporter.ReportType.STUCK)
             return False
         values = field.GetAllowedValues()
         for v in values:            
-            logging.info('field: ({},{}) possible values: {} try {}'.format(board.fieldRow(field), board.fieldCol(field), field.GetAllowedValues(), v))
+            reporter.Report(Reporter.ReportType.NEWVALUE, {'row':board.fieldRow(field), 'col':board.fieldCol(field),
+                                         'values':field.GetAllowedValues(), 'value':v})
             field.value = v
-            if self.Solve(board, depth+1):
+            if self.Solve(board, depth+1, reporter):
                 return True
             else:
-                logging.info('backtrack [{}]'.format(depth))
+                reporter.Report(Reporter.ReportType.BACKTRACK, {'depth':depth})
                 field.value = SCS.INITIAL
         return False
 
-    def SolveWithTiming(self, board):
+    def SolveWithTiming(self, board, reporter = Reporter()):
         self.stopwatch.reset()
         self.stopwatch.start()
-        result = self.Solve(board, 0)
+        reporter.Report(Reporter.ReportType.START, {'board': BoardExporterToString().BoardAsString(board)})
+        result = self.Solve(board, 0, reporter)
         self.stopwatch.stop()  
+        if result:
+            reporter.Report(Reporter.ReportType.ENDTRUE, {'time':self.SolveTime(), 'board': BoardExporterToString().BoardAsString(board)})
+        else:
+            reporter.Report(Reporter.ReportType.ENDFALSE, {'time':self.SolveTime()})        
         return result      
     
     def SolveTime(self):
         return str(self.stopwatch)
-        
-logging.basicConfig(filename='suko.log', filemode = 'w',level =logging.DEBUG, format='%(message)s')
-filename = r'.\sudfiles\test10.txt'
-board = BoardImporterFromFile(filename).board
-# board = BoardImporterFromArray([
-#                             "178 236 495", 
-#                             "359 174 268", 
-#                             "264 000 713",
-#                             "745 612 389", 
-#                             "813 450 627", 
-#                             "926 783 154", 
-#                             "001 325 900", 
-#                             "532 967 841", 
-#                             "697 841 532"]).board
-Solver = BruteForceSolver()
-print("\nsolving:\n" + BoardExporterToString().BoardAsString(board))
-logging.info('\n'+BoardExporterToString().BoardAsString(board))
-if Solver.SolveWithTiming(board):
-    print('\nsolved! ({})\n\n'.format(Solver.SolveTime())+BoardExporterToString().BoardAsString(board))
-    logging.info('solved! ({})'.format(Solver.SolveTime()))
-    logging.info('\n'+BoardExporterToString().BoardAsString(board))
-else:
-    logging.info('NO SOLUTION FOUND ({})'.format(Solver.SolveTime()))
+    
+def SolveFile(filename, logfilename):
+    BruteForceSolver().SolveWithTiming(BoardImporterFromFile(filename).board, SimpleReporter(logfilename))
+
