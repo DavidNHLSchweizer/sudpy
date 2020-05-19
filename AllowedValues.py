@@ -1,6 +1,6 @@
 import SudokuConstants as SCS
 from Value import Value
-from observerPattern import Subject, SimpleSubject, Observer
+from observerPattern import Observer
 from typing import List
 
 class AllowedValues(Observer):
@@ -49,3 +49,5 @@ class ContainsAllowedValues:
         return self.allowedValues.nrAllowedValues()
     def ObserveValue(self, value: Value):
         self.allowedValues.ObserveValue(value)
+    def StopObserveValue(self, value: Value):
+        self.allowedValues.StopObserveValue(value)        

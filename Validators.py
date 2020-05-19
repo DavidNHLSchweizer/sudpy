@@ -1,7 +1,6 @@
 import SudokuConstants as SCS
 from Fields import Fields
 from Board import Board
-from BoardImporter import BoardImporterFromArray
 
 class FieldsValidator:
     def nrFieldsWithValues(self, fields: Fields):
@@ -24,7 +23,6 @@ class FieldsValidator:
 class BoardValidator:
     def __init__(self):
         self._fieldsValidator = FieldsValidator()
-
     def IsValidValues(self, board: Board):
         for r in range(SCS.BOARDSIZE):
             if not self._fieldsValidator.IsValidValues(board.Row(r)):

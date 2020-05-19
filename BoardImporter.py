@@ -1,7 +1,7 @@
 import SudokuConstants as SCS
 import re
 from Board import Board
-from BoardExporter import BoardExporter
+#from BoardExporter import BoardExporter
 
 class BoardImporter:
     def __init__(self):

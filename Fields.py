@@ -1,5 +1,4 @@
 import SudokuConstants as SCS
-from Value import Value
 from Field import Field
 
 class Fields:

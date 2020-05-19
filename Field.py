@@ -15,11 +15,23 @@ class Field(ContainsAllowedValues):
     @value.setter
     def value(self, newvalue):
         self._value.value = newvalue
-    def _addInfluencingFields(self, fields):        
+    def _validateFields(self, fields):
+        if not fields:
+            return False
         if len(fields) != SCS.BOARDSIZE:
             raise SCS.INVALIDFIELDSEXCEPTION
         if not self in fields:
             raise SCS.INVALIDFIELDSEXCEPTION2
+        return True
+    def _removeInfluencingFields(self, fields):
+        if not self._validateFields(fields):
+            return
+        for field in fields:
+            if field != self:
+                self.StopObserveValue(field._value)
+    def _addInfluencingFields(self, fields):        
+        if not self._validateFields(fields):
+            return
         for field in fields:
             if field != self:
                 self.ObserveValue(field._value)
@@ -28,6 +40,8 @@ class Field(ContainsAllowedValues):
         return self._row
     @Row.setter
     def Row(self, rowFields):
+        if self._row:
+            self._removeInfluencingFields(self._row.fields)
         self._row = rowFields
         self._addInfluencingFields(rowFields.fields)        
     @property
@@ -35,6 +49,8 @@ class Field(ContainsAllowedValues):
         return self._column
     @Column.setter
     def Column(self, columnFields):
+        if self._column:
+            self._removeInfluencingFields(self._column.fields)
         self._column = columnFields
         self._addInfluencingFields(columnFields.fields)        
     @property
@@ -42,6 +58,8 @@ class Field(ContainsAllowedValues):
         return self._block
     @Block.setter
     def Block(self, blockFields):
+        if self._block:
+            self._removeInfluencingFields(self._block.fields)
         self._block = blockFields
         self._addInfluencingFields(blockFields.fields)
     def fixValue(self):

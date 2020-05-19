@@ -1,6 +1,5 @@
 import SudokuConstants as SCS
-from abc import abstractmethod
-from observerPattern import SimpleSubject, Observer
+from observerPattern import SimpleSubject
 
 class Value(SimpleSubject):
     def __init__(self, value=SCS.INITIAL, fixedValue = False):
