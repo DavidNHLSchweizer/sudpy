@@ -52,9 +52,9 @@ class BruteForceSolver:
         return False
 
     def SolveWithTiming(self, board, reporter = Reporter()):
-        reporter.start(board)
+        reporter.Start(board)
         result = self.Solve(board, 0, reporter)
-        reporter.stop(board, result)
+        reporter.Stop(board, result)
         return result      
     
 def SolveFile(filename, logfilename):
