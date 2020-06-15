@@ -8,7 +8,7 @@ class AllowedValues(Observer):
         super(AllowedValues, self).__init__()
         self._allowedValues: List(int) = []
         self._refCount = [0]
-        for i in range(1, SCS.BOARDSIZE+1):
+        for i in range(1, SCS.GRIDSIZE+1):
             self._allowedValues.append(i)
             self._refCount.append(0)
     def _addValue(self, value):

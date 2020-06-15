@@ -1,11 +1,10 @@
 import SudokuConstants as SCS
 import re
-from Board import Board
-#from BoardExporter import BoardExporter
+from Grid import Grid
 
-class BoardImporter:
+class GridImporter:
     def __init__(self):
-        self.board = Board()
+        self.grid = Grid()
         self.patterns = []
         self.patterns.append(re.compile(r'\d\d\d.\d\d\d.\d\d\d'))
         
@@ -33,30 +32,30 @@ class BoardImporter:
         col = 0
         for value in parsedLine:
             if value > 0:
-                field = self.board.field(row, col)
+                field = self.grid.square(row, col)
                 field.value = value
                 field.fixValue()
             col += 1
 
-class BoardImporterFromFile(BoardImporter):
+class GridImporterFromFile(GridImporter):
     def __init__(self, filename):
         super().__init__()
         with(open(filename, "r")) as fileHandler:
             self.Import(fileHandler)
                     
-class BoardImporterFromArray(BoardImporter):
+class GridImporterFromArray(GridImporter):
     def __init__(self, array):
         super().__init__()
         self.Import(array)
 
 
 # filename = r'.\sudfiles\t9b.txt'
-# I = BoardImporterFromFile(filename)
+# I = GridImporterFromFile(filename)
 
-# B = BoardExporter()
-# B.dumpFile(I.board, filename + '.exp')
+# B = GridExporter()
+# B.dumpFile(I.grid, filename + '.exp')
 
-# A = BoardImporterFromArray(["000 006 000",
+# A = GridImporterFromArray(["000 006 000",
 #                             "059 000 008",
 #                             "200 008 000",
 #                             "045 000 000",
@@ -65,11 +64,11 @@ class BoardImporterFromArray(BoardImporter):
 #                             "000 325 006",
 #                             "000 000 000",
 #                             "000 000 000"])
-# B.dumpFile(A.board, r'.\sudfiles\arrayimport.exp')
-# print(A.board.asString())
+# B.dumpFile(A.grid, r'.\sudfiles\arrayimport.exp')
+# print(A.grid.asString())
 # print('---')
 
-# A = BoardImporterFromArray(["178 236 495", 
+# A = GridImporterFromArray(["178 236 495", 
 #                             "359 174 268", 
 #                             "264 598 713",
 #                             "745 612 389", 
@@ -78,10 +77,10 @@ class BoardImporterFromArray(BoardImporter):
 #                             "481 325 976", 
 #                             "532 967 841", 
 #                             "697 841 532"]) 
-# print(A.board.asString())
+# print(A.grid.asString())
 # print('---')
 
-# Board  = BoardImporterFromArray([
+# Grid  = GridImporterFromArray([
 #                             "000 006 000",
 #                             "059 080 000",
 #                             "200 008 000",
@@ -90,12 +89,12 @@ class BoardImporterFromArray(BoardImporter):
 #                             "006 003 054",
 #                             "000 325 006",
 #                             "000 000 000",
-#                             "000 000 000"]).board
-# # for r in range(SCS.BOARDSIZE):
-# #     print(Board.Row(r).asString())
-# print(Board.asString())
+#                             "000 000 000"]).grid
+# # for r in range(SCS.GRIDSIZE):
+# #     print(Grid.Row(r).asString())
+# print(Grid.asString())
 # print('---')
 # for r in range(SCS.BLOCKSIZE):
 #     for c in range(SCS.BLOCKSIZE):
-#         print('block: [{}, {}]\n{}'.format(r,c, Board.Block(r,c).asString()))
+#         print('block: [{}, {}]\n{}'.format(r,c, Grid.Block(r,c).asString()))
 

@@ -6,7 +6,7 @@ from Value import Value
 class TestAllowedValues:
     def _get_values(self, allowedValues=None, initialize=True):
         values = []
-        for i in range(SCS.BOARDSIZE):
+        for i in range(SCS.GRIDSIZE):
             if initialize:
                 v = Value(i+1)
             else:
@@ -22,15 +22,15 @@ class TestAllowedValues:
 
     def test_allowedValues_initial(self):
         AV = AllowedValues()
-        for i in range(1,SCS.BOARDSIZE+1):
+        for i in range(1,SCS.GRIDSIZE+1):
             self._testAllowed(AV, i, True)
-        assert AV.nrAllowedValues() == SCS.BOARDSIZE
+        assert AV.nrAllowedValues() == SCS.GRIDSIZE
 
     def test_allowedValues_observe(self):
         AV = AllowedValues()
         values = self._get_values()
         n = AV.nrAllowedValues()
-        assert n == SCS.BOARDSIZE
+        assert n == SCS.GRIDSIZE
         for v in values:                        
             self._testAllowed(AV, v.value, True)
             AV.ObserveValue(v)
@@ -110,7 +110,7 @@ class TestAllowedValues:
         AV = AllowedValues()
         self._get_values(AV, False)
         av = AV.GetAllowedValues()
-        assert len(av) == SCS.BOARDSIZE
+        assert len(av) == SCS.GRIDSIZE
         prev = av[0]
         for i in range(1, len(av)):
             assert av[i] > prev

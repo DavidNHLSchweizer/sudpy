@@ -9,7 +9,7 @@ class Value(SimpleSubject):
         self._oldvalue = SCS.INITIAL
         self._fixedValue = fixedValue 
     def _checkLegalValue(self, value):
-        if not (SCS.IsClear(value) or (value >= 1 and value <= SCS.BOARDSIZE)):
+        if not (SCS.IsClear(value) or (value >= 1 and value <= SCS.GRIDSIZE)):
             raise ValueError(SCS.INVALIDVALUEEXCEPTION + ' {}'.format(value))        
     @property
     def value(self):

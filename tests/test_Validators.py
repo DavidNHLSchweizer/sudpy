@@ -1,110 +1,110 @@
 import SudokuConstants as SCS
-from Field import Field
-from Fields import Fields
-from Board import Board
-from Validators import FieldsValidator, BoardValidator
-from BoardImporter import BoardImporterFromArray
+from Square import Square
+from Squares import Squares
+from Grid import Grid
+from Validators import SquaresValidator, GridValidator
+from GridImporter import GridImporterFromArray
 
-class TestFieldsValidator:
-    def _initFields(self, nCols):
-        fields = Fields()
-        for _ in range(SCS.BOARDSIZE):
-            fields.addField(Field())
-        fields.nCols = nCols        
-        return fields
+class TestSquaresValidator:
+    def _initSquares(self, nCols):
+        squares = Squares()
+        for _ in range(SCS.GRIDSIZE):
+            squares.addSquare(Square())
+        squares.nCols = nCols        
+        return squares
 
     def test_initial(self):
-        fields = self._initFields(SCS.BOARDSIZE)
-        FV = FieldsValidator()
-        assert FV.nrFieldsWithValues(fields) == 0
-        assert FV.IsCompleteValues(fields) == False
-        assert FV.IsValidValues(fields) == True
+        squares = self._initSquares(SCS.GRIDSIZE)
+        SqV = SquaresValidator()
+        assert SqV.nrSquaresWithValues(squares) == 0
+        assert SqV.IsCompleteValues(squares) == False
+        assert SqV.IsValidValues(squares) == True
     def test_one_value(self):
-        fields = self._initFields(SCS.BOARDSIZE)
-        FV = FieldsValidator()
-        field = fields.fields[0]
-        field.value = 1
-        assert FV.nrFieldsWithValues(fields) == 1
-        assert FV.IsCompleteValues(fields) == False
-        assert FV.IsValidValues(fields) == True
+        squares = self._initSquares(SCS.GRIDSIZE)
+        SqV = SquaresValidator()
+        square = squares.squares[0]
+        square.value = 1
+        assert SqV.nrSquaresWithValues(squares) == 1
+        assert SqV.IsCompleteValues(squares) == False
+        assert SqV.IsValidValues(squares) == True
     def test_two_values_valid(self):
-        fields = self._initFields(SCS.BOARDSIZE)
-        FV = FieldsValidator()
-        fields.fields[0].value = 1
-        fields.fields[SCS.BOARDSIZE-1].value = 2
-        assert FV.nrFieldsWithValues(fields) == 2
-        assert FV.IsCompleteValues(fields) == False
-        assert FV.IsValidValues(fields) == True
+        squares = self._initSquares(SCS.GRIDSIZE)
+        SqV = SquaresValidator()
+        squares.squares[0].value = 1
+        squares.squares[SCS.GRIDSIZE-1].value = 2
+        assert SqV.nrSquaresWithValues(squares) == 2
+        assert SqV.IsCompleteValues(squares) == False
+        assert SqV.IsValidValues(squares) == True
     def test_two_values_invalid(self):
-        fields = self._initFields(SCS.BOARDSIZE)
-        FV = FieldsValidator()
-        fields.fields[0].value = 1
-        fields.fields[SCS.BOARDSIZE-1].value = 1
-        assert FV.nrFieldsWithValues(fields) == 2
-        assert FV.IsCompleteValues(fields) == False
-        assert FV.IsValidValues(fields) == False
+        squares = self._initSquares(SCS.GRIDSIZE)
+        SqV = SquaresValidator()
+        squares.squares[0].value = 1
+        squares.squares[SCS.GRIDSIZE-1].value = 1
+        assert SqV.nrSquaresWithValues(squares) == 2
+        assert SqV.IsCompleteValues(squares) == False
+        assert SqV.IsValidValues(squares) == False
     def test_full_values_valid(self):
-        fields = self._initFields(SCS.BOARDSIZE)
-        FV = FieldsValidator()
-        for i in range(SCS.BOARDSIZE):
-            fields.fields[i].value = i+1
-        assert FV.nrFieldsWithValues(fields) == SCS.BOARDSIZE
-        assert FV.IsCompleteValues(fields) == True
-        assert FV.IsValidValues(fields) == True
+        squares = self._initSquares(SCS.GRIDSIZE)
+        SqV = SquaresValidator()
+        for i in range(SCS.GRIDSIZE):
+            squares.squares[i].value = i+1
+        assert SqV.nrSquaresWithValues(squares) == SCS.GRIDSIZE
+        assert SqV.IsCompleteValues(squares) == True
+        assert SqV.IsValidValues(squares) == True
     def test_full_values_invalid(self):
-        fields = self._initFields(SCS.BOARDSIZE)
-        FV = FieldsValidator()
-        for i in range(SCS.BOARDSIZE):
-            fields.fields[i].value = 3
-        assert FV.nrFieldsWithValues(fields) == SCS.BOARDSIZE
-        assert FV.IsCompleteValues(fields) == True
-        assert FV.IsValidValues(fields) == False
+        squares = self._initSquares(SCS.GRIDSIZE)
+        SqV = SquaresValidator()
+        for i in range(SCS.GRIDSIZE):
+            squares.squares[i].value = 3
+        assert SqV.nrSquaresWithValues(squares) == SCS.GRIDSIZE
+        assert SqV.IsCompleteValues(squares) == True
+        assert SqV.IsValidValues(squares) == False
     def test_full_values_invalid2(self):
-        fields = self._initFields(SCS.BOARDSIZE)
-        FV = FieldsValidator()
-        for i in range(SCS.BOARDSIZE):
-            fields.fields[i].value = i+1
-        fields.fields[3].value = 1
-        assert FV.nrFieldsWithValues(fields) == SCS.BOARDSIZE
-        assert FV.IsCompleteValues(fields) == True
-        assert FV.IsValidValues(fields) == False
+        squares = self._initSquares(SCS.GRIDSIZE)
+        SqV = SquaresValidator()
+        for i in range(SCS.GRIDSIZE):
+            squares.squares[i].value = i+1
+        squares.squares[3].value = 1
+        assert SqV.nrSquaresWithValues(squares) == SCS.GRIDSIZE
+        assert SqV.IsCompleteValues(squares) == True
+        assert SqV.IsValidValues(squares) == False
     def test_some_values_valid(self):
-        fields = self._initFields(SCS.BOARDSIZE)
-        FV = FieldsValidator()
-        for i in range(SCS.BOARDSIZE):
-            fields.fields[i].value = i+1
-        fields.fields[3].value = SCS.INITIAL
-        assert FV.nrFieldsWithValues(fields) == SCS.BOARDSIZE-1
-        assert FV.IsCompleteValues(fields) == False
-        assert FV.IsValidValues(fields) == True
+        squares = self._initSquares(SCS.GRIDSIZE)
+        SqV = SquaresValidator()
+        for i in range(SCS.GRIDSIZE):
+            squares.squares[i].value = i+1
+        squares.squares[3].value = SCS.INITIAL
+        assert SqV.nrSquaresWithValues(squares) == SCS.GRIDSIZE-1
+        assert SqV.IsCompleteValues(squares) == False
+        assert SqV.IsValidValues(squares) == True
     def test_some_values_invalid(self):
-        fields = self._initFields(SCS.BOARDSIZE)
-        FV = FieldsValidator()
-        for i in range(SCS.BOARDSIZE):
-            fields.fields[i].value = i+1
-        fields.fields[3].value = SCS.INITIAL
-        fields.fields[6].value = fields.fields[4].value
-        assert FV.nrFieldsWithValues(fields) == SCS.BOARDSIZE-1
-        assert FV.IsCompleteValues(fields) == False
-        assert FV.IsValidValues(fields) == False
+        squares = self._initSquares(SCS.GRIDSIZE)
+        SqV = SquaresValidator()
+        for i in range(SCS.GRIDSIZE):
+            squares.squares[i].value = i+1
+        squares.squares[3].value = SCS.INITIAL
+        squares.squares[6].value = squares.squares[4].value
+        assert SqV.nrSquaresWithValues(squares) == SCS.GRIDSIZE-1
+        assert SqV.IsCompleteValues(squares) == False
+        assert SqV.IsValidValues(squares) == False
     def test_block_some_values_invalid(self):
-        fields = self._initFields(SCS.BLOCKSIZE)
-        FV = FieldsValidator()
-        fields.fields[3].value = 2
-        fields.fields[6].value = 2
-        assert FV.nrFieldsWithValues(fields) == 2
-        assert FV.IsCompleteValues(fields) == False
-        assert FV.IsValidValues(fields) == False
+        squares = self._initSquares(SCS.BLOCKSIZE)
+        SqV = SquaresValidator()
+        squares.squares[3].value = 2
+        squares.squares[6].value = 2
+        assert SqV.nrSquaresWithValues(squares) == 2
+        assert SqV.IsCompleteValues(squares) == False
+        assert SqV.IsValidValues(squares) == False
 
-class TestBoardsValidator:
+class TestGridsValidator:
     def test_initial(self):
-        board = Board()
-        BV = BoardValidator()
-        assert BV.nrFieldsWithValues(board) == 0
-        assert BV.IsCompleteValues(board) == False
-        assert BV.IsValidValues(board) == True
-    def test_complete_valid_board(self):
-        board = BoardImporterFromArray([
+        grid = Grid()
+        GV = GridValidator()
+        assert GV.nrSquaresWithValues(grid) == 0
+        assert GV.IsCompleteValues(grid) == False
+        assert GV.IsValidValues(grid) == True
+    def test_complete_valid_grid(self):
+        grid = GridImporterFromArray([
                             "178 236 495", 
                             "359 174 268", 
                             "264 598 713",
@@ -113,13 +113,13 @@ class TestBoardsValidator:
                             "926 783 154", 
                             "481 325 976", 
                             "532 967 841", 
-                            "697 841 532"]).board
-        BV = BoardValidator()
-        assert BV.nrFieldsWithValues(board) == SCS.BOARDSIZE * SCS.BOARDSIZE
-        assert BV.IsCompleteValues(board) == True
-        assert BV.IsValidValues(board) == True
-    def test_complete_invalid_board(self):
-        board = BoardImporterFromArray([
+                            "697 841 532"]).grid
+        GV = GridValidator()
+        assert GV.nrSquaresWithValues(grid) == SCS.GRIDSIZE * SCS.GRIDSIZE
+        assert GV.IsCompleteValues(grid) == True
+        assert GV.IsValidValues(grid) == True
+    def test_complete_invalid_grid(self):
+        grid = GridImporterFromArray([
                             "178 236 495", 
                             "359 174 268", 
                             "264 598 713",
@@ -128,13 +128,13 @@ class TestBoardsValidator:
                             "926 783 154", 
                             "481 325 976", 
                             "532 967 841", 
-                            "697 841 532"]).board
-        BV = BoardValidator()
-        assert BV.nrFieldsWithValues(board) == SCS.BOARDSIZE * SCS.BOARDSIZE
-        assert BV.IsCompleteValues(board) == True
-        assert BV.IsValidValues(board) == False
-    def test_incomplete_valid_board(self):
-        board = BoardImporterFromArray([
+                            "697 841 532"]).grid
+        GV = GridValidator()
+        assert GV.nrSquaresWithValues(grid) == SCS.GRIDSIZE * SCS.GRIDSIZE
+        assert GV.IsCompleteValues(grid) == True
+        assert GV.IsValidValues(grid) == False
+    def test_incomplete_valid_grid(self):
+        grid = GridImporterFromArray([
                             "178 236 495", 
                             "359 174 268", 
                             "264 598 713",
@@ -143,13 +143,13 @@ class TestBoardsValidator:
                             "926 783 154", 
                             "481 325 976", 
                             "532 967 841", 
-                            "697 841 532"]).board
-        BV = BoardValidator()
-        assert BV.nrFieldsWithValues(board) == SCS.BOARDSIZE * SCS.BOARDSIZE-1
-        assert BV.IsCompleteValues(board) == False
-        assert BV.IsValidValues(board) == True
-    def test_incomplete_valid_board2(self):
-        board = BoardImporterFromArray([
+                            "697 841 532"]).grid
+        GV = GridValidator()
+        assert GV.nrSquaresWithValues(grid) == SCS.GRIDSIZE * SCS.GRIDSIZE-1
+        assert GV.IsCompleteValues(grid) == False
+        assert GV.IsValidValues(grid) == True
+    def test_incomplete_valid_grid2(self):
+        grid = GridImporterFromArray([
                             "000 006 000",
                             "059 000 008",
                             "200 008 000",
@@ -158,13 +158,13 @@ class TestBoardsValidator:
                             "006 003 054",
                             "000 325 006",
                             "000 000 000",
-                            "000 000 000"]).board
-        BV = BoardValidator()
-        assert BV.nrFieldsWithValues(board) == 17
-        assert BV.IsCompleteValues(board) == False
-        assert BV.IsValidValues(board) == True
+                            "000 000 000"]).grid
+        GV = GridValidator()
+        assert GV.nrSquaresWithValues(grid) == 17
+        assert GV.IsCompleteValues(grid) == False
+        assert GV.IsValidValues(grid) == True
     def test_incomplete_invalid_block(self):
-        board = BoardImporterFromArray([
+        grid = GridImporterFromArray([
                             "000 006 000",
                             "059 080 000",
                             "200 008 000",
@@ -173,9 +173,9 @@ class TestBoardsValidator:
                             "006 003 054",
                             "000 325 006",
                             "000 000 000",
-                            "000 000 000"]).board
-        BV = BoardValidator()
-        assert BV.nrFieldsWithValues(board) == 17
-        assert BV.IsCompleteValues(board) == False
-        assert BV.IsValidValues(board) == False
+                            "000 000 000"]).grid
+        GV = GridValidator()
+        assert GV.nrSquaresWithValues(grid) == 17
+        assert GV.IsCompleteValues(grid) == False
+        assert GV.IsValidValues(grid) == False
                     

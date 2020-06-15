@@ -16,7 +16,7 @@ class RandomBoard:
             return SCS.INITIAL
         Try = 0
         while True:
-            value = 1 + random.randrange(SCS.BOARDSIZE)
+            value = 1 + random.randrange(SCS.GRIDSIZE)
             if value in allowedValues:
                 return value
             elif Try > 42:
@@ -26,9 +26,9 @@ class RandomBoard:
 
     def Generate(self, pctfilled, isValid):
         self.board.clear()
-        for r in range(SCS.BOARDSIZE):
-            for c in range(SCS.BOARDSIZE):
-                field = self.board.field(r,c)
+        for r in range(SCS.GRIDSIZE):
+            for c in range(SCS.GRIDSIZE):
+                field = self.board.square(r,c)
                 value = self.GenerateFieldValue(pctfilled, field.GetAllowedValues())
                 field.value = value
 

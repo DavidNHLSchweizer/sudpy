@@ -9,7 +9,7 @@ class TestValue:
         assert SCS.IsClear(value.value)
 
     def test_value_assignment_initial(self):
-        for v in range(1,SCS.BOARDSIZE+1):
+        for v in range(1,SCS.GRIDSIZE+1):
             value = Value(v)
             assert value.value == v
             assert SCS.IsClear(value.oldvalue)
@@ -17,7 +17,7 @@ class TestValue:
     def test_value_assignment_newvalue(self):
         value = Value(2)
         oldvalue = 2
-        for v in range(SCS.BOARDSIZE+1):
+        for v in range(SCS.GRIDSIZE+1):
             value.value = v
             assert value.value == v
             assert value.oldvalue == oldvalue
@@ -47,7 +47,7 @@ class TestValue:
             Value().value = -1
     def test_invalid_value_toohigh(self):
         with pytest.raises(ValueError, match=SCS.INVALIDVALUEEXCEPTION):
-            Value(SCS.BOARDSIZE+1)
+            Value(SCS.GRIDSIZE+1)
     def test_invalid_value_toohigh2(self):
         with pytest.raises(ValueError, match=SCS.INVALIDVALUEEXCEPTION):
-            Value().value = SCS.BOARDSIZE+1
+            Value().value = SCS.GRIDSIZE+1
