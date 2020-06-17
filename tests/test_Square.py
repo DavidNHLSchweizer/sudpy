@@ -22,3 +22,12 @@ class TestSquare:
         with pytest.raises(ValueError, match=SCS.INVALIDVALUEEXCEPTION):
             Square(SCS.GRIDSIZE+1)
 
+    def test_Square_value_toggle(self):
+        for val in range(SCS.GRIDSIZE):
+            square = Square(val)
+            assert square.value == val
+            square.clear()
+            assert SCS.IsClear(square.value)
+            square.value = val
+            assert square.value == val
+            

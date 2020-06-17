@@ -19,47 +19,57 @@ class TestSquares:
     def test_squares_initialize(self):
         squares = self._getSquares()
         assert squares.nSquares == len(self.singleSquares)
+        assert squares.nCols == squares.nSquares
+        assert squares.nRows == 1
     
-    def test_squares_value_toggle(self):
+    def test_squares_clear(self):
         squares = self._getSquares()
         for square in squares.squares:
-            val = square.value
-            square.clear()
-            square.value = val
+            assert not SCS.IsClear(square.value)
+        squares.clear()
+        for square in squares.squares:
+            assert SCS.IsClear(square.value)
 
     def test_squares_asOneColumn(self):
         squares = self._getSquares()
         squares.nCols = 1
-        assert squares.nRows == SCS.GRIDSIZE
+        assert squares.nRows == squares.nSquares
         assert squares.nCols == 1
-        for r in range(SCS.GRIDSIZE):
+        for r in range(squares.nRows):
             sq = squares.square(r, 0)
             assert sq.value == r+1
 
-    def tesquaresares_asOneRow(self):
+    def test_squares_asOneRow(self):
         squares = self._getSquares()
-        squares.nCols = SCS.GRIDSIZE
+        squares.nRows = 1
         assert squares.nRows == 1
-        assert squares.nCols == SCS.GRIDSIZE
-        for c in range(SCS.GRIDSIZE):
+        assert squares.nCols == squares.nSquares
+        for c in range(squares.nCols):
             sq = squares.square(0, c)
             assert sq.value == c+1
-
-    def test_squares_asBlock(self):
-        squares = self._getSquares()
-        x = 1
-        squares.nCols = SCS.BLOCKSIZE
+            
+    def _test_squares_asBlock(self, squares):
         assert squares.nRows == SCS.BLOCKSIZE
         assert squares.nCols == SCS.BLOCKSIZE
-        for r in range(SCS.BLOCKSIZE):
-            for c in range(SCS.BLOCKSIZE):                
+        x = 1
+        for r in range(squares.nRows):
+            for c in range(squares.nCols):                
                 sq = squares.square(r, c)
                 assert sq.value == x
                 x += 1
+    
+    def test_squares_asBlock1(self):
+        squares = self._getSquares()
+        squares.nCols = SCS.BLOCKSIZE
+        self._test_squares_asBlock(squares)
+    def test_squares_asBlock2(self):
+        squares = self._getSquares()
+        squares.nRows = SCS.BLOCKSIZE
+        self._test_squares_asBlock(squares)
 
     def test_squares_squareRow_squareColumn_asOneRow(self):
         squares = self._getSquares()
-        squares.nCols = SCS.GRIDSIZE
+        squares.nRows = 1
         c = 0
         for square in self.singleSquares:
             assert squares.sqRow(square) == 0

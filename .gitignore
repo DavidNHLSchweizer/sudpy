@@ -3,3 +3,4 @@ __pycache__/**
 *.dmp
 *.pyc
 *.zip
+temp/**
