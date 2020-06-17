@@ -1,5 +1,4 @@
 import SudokuConstants as SCS
-from Square import Square
 from Squares import Squares
 
 class _SubGrid(Squares):
