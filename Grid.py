@@ -52,6 +52,8 @@ class Grid(Squares):
     def BlockFromSquare(self, row, col):
         self._CheckLegal(row, col)
         return self.Blocks[row // SCS.BLOCKSIZE][col // SCS.BLOCKSIZE]
+    def sqBlock(self, square):
+        return self.BlockFromSquare(self.sqRow(square), self.sqCol(square))
     def Block(self, bRow, bCol):
         self._CheckLegalBase(bRow, bCol, SCS.BLOCKSIZE, SCS.BLOCKSIZE)
         return self.Blocks[bRow][bCol]

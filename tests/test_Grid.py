@@ -42,7 +42,8 @@ class TestGridInitialization:
                 blk = grid.BlockFromSquare(r,c)
                 assert blk._Contains(square)
                 assert grid.sqRow(square) == r
-                assert grid.sqCol(square) == c                
+                assert grid.sqCol(square) == c
+                assert grid.sqBlock(square) == blk                
                 r0 = (r // SCS.BLOCKSIZE) * SCS.BLOCKSIZE
                 c0 = (c // SCS.BLOCKSIZE) * SCS.BLOCKSIZE
                 for r2 in range(r0, r0 + SCS.BLOCKSIZE):
