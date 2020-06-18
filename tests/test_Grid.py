@@ -39,7 +39,7 @@ class TestGridInitialization:
         for r in range(SCS.GRIDSIZE):
             for c in range(SCS.GRIDSIZE):
                 square = grid.square(r,c)
-                blk = grid._getBlock(r,c)
+                blk = grid.BlockFromSquare(r,c)
                 assert blk._Contains(square)
                 assert grid.sqRow(square) == r
                 assert grid.sqCol(square) == c                
@@ -66,11 +66,11 @@ class TestGridInitialization:
         square.value = 5
         self._testing_influencing_squares(square, 5, False, grid.Row(2))
         self._testing_influencing_squares(square, 5, False, grid.Column(3))
-        self._testing_influencing_squares(square, 5, False, grid._getBlock(2, 3))
+        self._testing_influencing_squares(square, 5, False, grid.BlockFromSquare(2, 3))
         square.clear()
         self._testing_influencing_squares(square, 5, True, grid.Row(2))
         self._testing_influencing_squares(square, 5, True, grid.Column(3))
-        self._testing_influencing_squares(square, 5, True, grid._getBlock(2, 3))
+        self._testing_influencing_squares(square, 5, True, grid.BlockFromSquare(2, 3))
 
     def test_grid_allowed_values_rowcolblk2(self):
         grid = Grid()
@@ -78,17 +78,17 @@ class TestGridInitialization:
         square.value = 5
         self._testing_influencing_squares(square, 5, False, grid.Row(2))
         self._testing_influencing_squares(square, 5, False, grid.Column(3))
-        self._testing_influencing_squares(square, 5, False, grid._getBlock(2, 3))
+        self._testing_influencing_squares(square, 5, False, grid.BlockFromSquare(2, 3))
         self._testing_influencing_squares(square, 1, True, grid.Row(2))
         self._testing_influencing_squares(square, 1, True, grid.Column(3))
-        self._testing_influencing_squares(square, 1, True, grid._getBlock(2, 3))
+        self._testing_influencing_squares(square, 1, True, grid.BlockFromSquare(2, 3))
         square.value = 1
         self._testing_influencing_squares(square, 5, True, grid.Row(2))
         self._testing_influencing_squares(square, 5, True, grid.Column(3))
-        self._testing_influencing_squares(square, 5, True, grid._getBlock(2, 3))
+        self._testing_influencing_squares(square, 5, True, grid.BlockFromSquare(2, 3))
         self._testing_influencing_squares(square, 1, False, grid.Row(2))
         self._testing_influencing_squares(square, 1, False, grid.Column(3))
-        self._testing_influencing_squares(square, 1, False, grid._getBlock(2, 3))
+        self._testing_influencing_squares(square, 1, False, grid.BlockFromSquare(2, 3))
 
     def test_grid_allowed_values_rowcolblk3(self):
         grid = Grid()

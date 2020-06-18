@@ -7,6 +7,7 @@ INVALIDSQUARESEXCEPTION = 'invalid dimension of squares group'
 INVALIDSIZEEXCEPTION = 'invalid size'
 INVALIDSQUARESEXCEPTION2 = 'adding invalid block'
 INVALIDREFCOUNTEXCEPTION    = 'reference count'
+PROGRAMMINGEXCEPTION    = 'invalid (series) of calls'
 INITIAL   = 0
 GRIDSIZE  = 9
 BLOCKSIZE = 3

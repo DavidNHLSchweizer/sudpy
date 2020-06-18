@@ -43,15 +43,15 @@ class Grid(Squares):
                         blkArray.append(self.square(r, c))
                 BlockRow.append(Block(blkArray))
             self.Blocks.append(BlockRow)
-    def _getBlock(self, row, col):
-        self._CheckLegal(row, col)
-        return self.Blocks[row // SCS.BLOCKSIZE][col // SCS.BLOCKSIZE]
     def Row(self, row):
         self._CheckLegal(row, 0)
         return self.Rows[row]
     def Column(self, col):
         self._CheckLegal(0, col)
         return self.Cols[col]
+    def BlockFromSquare(self, row, col):
+        self._CheckLegal(row, col)
+        return self.Blocks[row // SCS.BLOCKSIZE][col // SCS.BLOCKSIZE]
     def Block(self, bRow, bCol):
         self._CheckLegalBase(bRow, bCol, SCS.BLOCKSIZE, SCS.BLOCKSIZE)
         return self.Blocks[bRow][bCol]

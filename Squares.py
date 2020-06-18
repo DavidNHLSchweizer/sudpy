@@ -9,14 +9,6 @@ class Squares:
     def addSquare(self, square: Square):
         self.squares.append(square)
         self._nCols += 1
-    def updateDependencies(self):
-        # this can be overridden to handle Squares that 
-        # observe each other's values
-        pass
-    def addSquares(self, squares):
-        for square in squares: 
-            self.addSquare(square)
-        self.updateDependencies()
     def _GetIndex(self, square):
         if not square in self.squares:
             return SCS.INDEXNOTFOUND        
