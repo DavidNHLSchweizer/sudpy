@@ -12,7 +12,9 @@ INITIAL   = 0
 GRIDSIZE  = 9
 BLOCKSIZE = 3
 INDEXNOTFOUND = -1
+MINIMUMFILLEDSQUARES = 17 # theoretical minimal needed filled squares to be solvable
 
 
 def IsClear(value):
     return value == INITIAL
+

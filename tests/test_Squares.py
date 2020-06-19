@@ -21,7 +21,7 @@ class TestSquares:
         assert squares.nSquares == len(self.singleSquares)
         assert squares.nCols == squares.nSquares
         assert squares.nRows == 1
-    
+
     def test_squares_clear(self):
         squares = self._getSquares()
         for square in squares.squares:
@@ -29,6 +29,16 @@ class TestSquares:
         squares.clear()
         for square in squares.squares:
             assert SCS.IsClear(square.value)
+
+    def test_squares_nr_values(self):
+        squares = self._getSquares()
+        squares.clear()
+        assert squares.nrSquaresWithValues() == 0
+        n = 1
+        for square in squares.squares:
+            square.value = n
+            assert squares.nrSquaresWithValues() == n
+            n+=1
 
     def test_squares_asOneColumn(self):
         squares = self._getSquares()

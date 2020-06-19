@@ -7,6 +7,7 @@ class GridImporter:
         self.grid = Grid()
         self.patterns = []
         self.patterns.append(re.compile(r'\d\d\d.\d\d\d.\d\d\d'))
+        self.patterns.append(re.compile(r'[\.,\d]'))
         
     def Import(self, lineSource):
         row = 0
@@ -18,15 +19,16 @@ class GridImporter:
 
     def parseLine(self, line):
         for pattern in self.patterns:
-            match = pattern.match(line)
-            if not match:
-                pass
-        results = []
-        if match:
-            for ch in line[match.start():match.end()]:
-                if ch.isdigit():
-                    results.append(int(ch))
-        return results
+            results = []
+            for match in pattern.finditer(line):
+                for ch in line[match.start():match.end()]:
+                    if ch.isdigit():
+                        results.append(int(ch))
+                    elif ch == '.':
+                        results.append(int(0))
+            if len(results) == SCS.GRIDSIZE:
+                return results
+        return None
 
     def _convertToRow(self, parsedLine, row):
         col = 0
@@ -97,4 +99,42 @@ class GridImporterFromArray(GridImporter):
 # for r in range(SCS.BLOCKSIZE):
 #     for c in range(SCS.BLOCKSIZE):
 #         print('block: [{}, {}]\n{}'.format(r,c, Grid.Block(r,c).asString()))
+
+
+# pattern = re.compile(r'[\.,\d]')
+# for match in pattern.finditer('. . 9 | . 7 . | . . 5'):
+#     print(match)
+
+# G = GridImporterFromArray([
+#         '. . 9 | . 7 . | . . 5',
+#         '. . 2 | 1 . . | 9 . .',
+#         '1 . . | . 2 8 | . . .',
+#         '------+-------+------',
+#         '. 7 . | . . 5 | . . 1',
+#         '. . 8 | 5 1 . | . . .',
+#         '. 5 . | . . . | 3 . .',
+#         '------+-------+------',
+#         '. . . | . . 3 | . . 6',
+#         '8 . . | . . . | . . .',
+#         '2 1 . | . . . | . 8 7'
+#     ])
+# print(G.grid.asString())
+# print('--------')
+# grid = GridImporterFromArray([
+#                     "000 006 000",
+#                     "059 080 000",
+#                     "200 008 000",
+#                     "045 000 000",
+#                     "003 000 000",
+#                     "006 003 054",
+#                     "000 325 006",
+#                     "000 000 000",
+#                     "000 000 000"]).grid
+# print(grid.asString())
+
+# print( G.parseLine('. . 9 | . 7 . | . . 5'))
+
+# print(parseLine(r'\d\d\d.\d\d\d.\d\d\d', '000 006 000'))
+# print(parseLine(r'[\.,\d]', '. . 9 | . 7 . | . . 5'))
+# print(parseLine(r'[\.,\d]', '------+-------+------'))
 

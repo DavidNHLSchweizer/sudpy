@@ -1,6 +1,5 @@
 import logging
-from stopwatch import Stopwatch
-from BoardExporter import BoardExporterToString
+from GridExporter import GridExporterToString
 from enum import Enum
 
 class Reporter:
@@ -12,12 +11,13 @@ class Reporter:
         BACKTRACK   = 4
         ENDFALSE    = 41
         ENDTRUE     = 42
+misschien hier iets generaliseren?
 
-    def Start(self, board):
+    def Start(self, grid):
         pass
     def Report(self, rType: ReportType, **kwargs):
         pass
-    def Stop(self, board, success):
+    def Stop(self, grid, success, solveTime):
         pass
 
 class SimpleReporter(Reporter):
@@ -25,11 +25,10 @@ class SimpleReporter(Reporter):
         logging.basicConfig(filename=logfilename, filemode = 'w',level =logging.DEBUG, 
             format='%(message)s')
         self.Modulo = 1024
-        self.stopwatch = Stopwatch()
         
     def Report(self, rType: Reporter.ReportType, **kwargs):
         if rType == Reporter.ReportType.START:
-            start = '\nsolving:\n' + kwargs['board']
+            start = '\nsolving:\n' + kwargs['grid']
             print(start)
             logging.info(start)
         elif rType == Reporter.ReportType.STARTSOLVE:
@@ -48,21 +47,16 @@ class SimpleReporter(Reporter):
             logging.info(bah)
             print(bah)
         elif rType == Reporter.ReportType.ENDTRUE:
-            hoera = '\nsolved! ({})\n\n{}'.format(kwargs['time'], kwargs['board'])
+            hoera = '\nsolved! ({})\n\n{}'.format(kwargs['time'], kwargs['grid'])
             logging.info(hoera)
             print(hoera)
         else:
             pass
-    def SolveTime(self):
-        return str(self.stopwatch)
-    def Start(self, board):
-        self.stopwatch.reset()
-        self.stopwatch.start()
-        self.Report(Reporter.ReportType.START, board=BoardExporterToString().BoardAsString(board))
-    def Stop(self, board, success):
-        self.stopwatch.stop()  
+    def Start(self, grid):
+        self.Report(Reporter.ReportType.START, grid=GridExporterToString().GridAsString(grid))
+    def Stop(self, grid, success, solveTime):
         if success:
-            self.Report(Reporter.ReportType.ENDTRUE, time=self.SolveTime(), board=BoardExporterToString().BoardAsString(board))
+            self.Report(Reporter.ReportType.ENDTRUE, time=solveTime, grid=GridExporterToString().GridAsString(grid))
         else:
-            self.Report(Reporter.ReportType.ENDFALSE, time=self.SolveTime())        
+            self.Report(Reporter.ReportType.ENDFALSE, time=solveTime)        
 

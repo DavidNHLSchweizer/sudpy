@@ -11,6 +11,7 @@ class TestGridInitialization:
         grid = Grid()
         assert grid.nRows == SCS.GRIDSIZE
         assert grid.nCols == SCS.GRIDSIZE
+        assert grid.nrSquaresWithValues() == 0
 
     def test_grid_rows(self):
         grid = Grid()

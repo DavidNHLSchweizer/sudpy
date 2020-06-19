@@ -59,6 +59,13 @@ class Squares:
     @property
     def nSquares(self)->int:
         return len(self.squares)
+    def nrSquaresWithValues(self):
+        result = 0            
+        for square in self.squares:
+            if square.value != SCS.INITIAL:
+                result += 1
+        return result
+
     def asString(self):
         result = ''
         for r in range(self.nRows):

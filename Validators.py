@@ -3,12 +3,6 @@ from Squares import Squares
 from Grid import Grid
 
 class SquaresValidator:
-    def nrSquaresWithValues(self, squares: Squares):
-        result = 0            
-        for square in squares.squares:
-            if square.value != SCS.INITIAL:
-                result += 1
-        return result
     def IsValidValues(self, squares: Squares):
         values = []
         for square in squares.squares:
@@ -18,7 +12,7 @@ class SquaresValidator:
                 values.append(square.value)
         return True
     def IsCompleteValues(self, squares: Squares):
-        return self.nrSquaresWithValues(squares) == len(squares.squares)
+        return squares.nrSquaresWithValues() == squares.nSquares
 
 class GridValidator:
     def __init__(self):
@@ -40,11 +34,6 @@ class GridValidator:
             if not self._squaresValidator.IsCompleteValues(grid.Row(r)):
                 return False
         return True
-    def nrSquaresWithValues(self, grid: Grid):
-        result = 0
-        for r in range(grid.nRows):
-            result += self._squaresValidator.nrSquaresWithValues(grid.Row(r))
-        return result
     def asString(self, grid: Grid):
-        return 'Filled: {}/{}  Complete: {}   Valid: {}'.format(self.nrSquaresWithValues(grid), grid.nRows * grid.nCols,
+        return 'Filled: {}/{}  Complete: {}   Valid: {}'.format(grid.nrSquaresWithValues(), grid.nRows * grid.nCols,
              self.IsCompleteValues(grid), self.IsValidValues(grid))
