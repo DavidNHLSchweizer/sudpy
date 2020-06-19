@@ -1,12 +1,12 @@
 import random
 import SudokuConstants as SCS
-from Board import Board
+from Grid import Grid
 from Validators import FieldsValidator
-from BoardExporter import BoardExporterToTextFile
+from GridExporter import GridExporterToTextFile
 
-class RandomBoard:
+class RandomGrid:
     def  __init__(self, pctfilled, isValid):
-        self.board = Board()
+        self.grid = Grid()
         self.Generate(pctfilled, isValid)
     
     def GenerateFieldValue(self, pctfilled, allowedValues):
@@ -25,18 +25,16 @@ class RandomBoard:
                 Try +=1
 
     def Generate(self, pctfilled, isValid):
-        self.board.clear()
+        self.grid.clear()
         for r in range(SCS.GRIDSIZE):
             for c in range(SCS.GRIDSIZE):
-                field = self.board.square(r,c)
+                field = self.grid.square(r,c)
                 value = self.GenerateFieldValue(pctfilled, field.GetAllowedValues())
                 field.value = value
 
     def dumpFile(self, filename):
-        bd = BoardExporterToTextFile()
-        bd.PrintBoardAsText(self.board, filename)
+        GridExporterToTextFile().PrintBoardAsText(self.grid, filename)
     
-RB = RandomBoard(0.50, False)
-RB.dumpFile("./dumping.dmp")
+RandomGrid(0.50, False).dumpFile("./dumping.dmp")
 
 
