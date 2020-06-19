@@ -17,8 +17,6 @@ class Square(ContainsAllowedValues):
     @value.setter
     def value(self, newvalue):
         self._value.value = newvalue
-    def detachAll(self):
-        self._value.detachAll()
     def fixValue(self):
         self._value._fixedValue = True        
     def unfixValue(self):

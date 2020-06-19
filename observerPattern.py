@@ -31,6 +31,3 @@ class SimpleSubject(Subject):
     def notify(self) -> None:
         for observer in self.observers:
             observer.update(self)
-    def detachAll(self):
-        for observer in self.observers:
-            self.detach(observer)
