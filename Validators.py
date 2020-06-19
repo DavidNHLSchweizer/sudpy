@@ -24,25 +24,25 @@ class GridValidator:
     def __init__(self):
         self._squaresValidator = SquaresValidator()
     def IsValidValues(self, grid: Grid):
-        for r in range(SCS.GRIDSIZE):
+        for r in range(grid.nRows):
             if not self._squaresValidator.IsValidValues(grid.Row(r)):
                 return False
-        for c in range(SCS.GRIDSIZE):
+        for c in range(grid.nCols):
             if not self._squaresValidator.IsValidValues(grid.Column(c)):
                 return False
-        for brow in range(SCS.BLOCKSIZE):
-            for bcol in range(SCS.BLOCKSIZE):
+        for brow in range(grid.nBlockRows):
+            for bcol in range(grid.nBlockCols):
                 if not self._squaresValidator.IsValidValues(grid.Block(brow, bcol)):
                     return False
         return True
     def IsCompleteValues(self, grid: Grid):
-        for r in range(SCS.GRIDSIZE):
+        for r in range(grid.nRows):
             if not self._squaresValidator.IsCompleteValues(grid.Row(r)):
                 return False
         return True
     def nrSquaresWithValues(self, grid: Grid):
         result = 0
-        for r in range(SCS.GRIDSIZE):
+        for r in range(grid.nRows):
             result += self._squaresValidator.nrSquaresWithValues(grid.Row(r))
         return result
     def asString(self, grid: Grid):

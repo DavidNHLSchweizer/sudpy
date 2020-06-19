@@ -18,28 +18,28 @@ class Grid(Squares):
         self.nRows = SCS.GRIDSIZE
     def _init_Rows(self):
         self.Rows = []
-        for r in range(SCS.GRIDSIZE):
+        for r in range(self.nRows):
             rowArray = []
-            for c in range(SCS.GRIDSIZE):
+            for c in range(self.nCols):
                 rowArray.append(self.square(r, c))
             self.Rows.append(Row(rowArray))
     def _init_Cols(self):
         self.Cols = []
-        for c in range(SCS.GRIDSIZE):
+        for c in range(self.nCols):
             colArray = []
-            for r in range(SCS.GRIDSIZE):
+            for r in range(self.nRows):
                 colArray.append(self.square(r, c))
             self.Cols.append(Column(colArray))
     def _init_Blocks(self):
         self.Blocks = []
-        for bRow in range(SCS.BLOCKSIZE):
-            r0 = bRow * SCS.BLOCKSIZE
+        for bRow in range(self.nBlockRows):
+            r0 = bRow * self.nBlockRows
             BlockRow = []
-            for bCol in range(SCS.BLOCKSIZE):
-                c0 = bCol * SCS.BLOCKSIZE
+            for bCol in range(self.nBlockCols):
+                c0 = bCol * self.nBlockCols
                 blkArray = []
-                for r in range(r0, r0+SCS.BLOCKSIZE):
-                    for c in range(c0, c0+SCS.BLOCKSIZE):
+                for r in range(r0, r0+self.nBlockRows):
+                    for c in range(c0, c0+self.nBlockCols):
                         blkArray.append(self.square(r, c))
                 BlockRow.append(Block(blkArray))
             self.Blocks.append(BlockRow)
@@ -51,12 +51,21 @@ class Grid(Squares):
         return self.Cols[col]
     def BlockFromSquare(self, row, col):
         self._CheckLegal(row, col)
-        return self.Blocks[row // SCS.BLOCKSIZE][col // SCS.BLOCKSIZE]
+        return self.Blocks[row // self.nBlockRows][col // self.nBlockCols]
     def sqBlock(self, square):
         return self.BlockFromSquare(self.sqRow(square), self.sqCol(square))
     def Block(self, bRow, bCol):
-        self._CheckLegalBase(bRow, bCol, SCS.BLOCKSIZE, SCS.BLOCKSIZE)
+        self._CheckLegalBase(bRow, bCol, self.nBlockRows, self.nBlockCols)
         return self.Blocks[bRow][bCol]
+    @property
+    def nBlockRows(self):
+        return SCS.BLOCKSIZE
+    @property
+    def nBlockCols(self):
+        return SCS.BLOCKSIZE
+    @property
+    def nBlocks(self):
+        return self.nBlockRows * self.nBlockCols
     def clear(self):
         for square in self.squares:
             square.clear()

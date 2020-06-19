@@ -11,38 +11,37 @@ class BruteForceSolver:
         self.validator = GridValidator()
         self.nPass = 0
 
-    def findBestFieldToTryNext(self, grid):
-        # find the open square with the minimum values possible
+    def findBestSquareToTryNext(self, grid):
+        # find the open square with the least values possible
         result = None
-        curBest = SCS.GRIDSIZE + 1
-        for r in range(SCS.GRIDSIZE):
-            for c in range(SCS.GRIDSIZE):
-                square = grid.square(r,c)
-                if not SCS.IsClear(square.value):
-                    continue
-                n = square.nrAllowedValues()
-                if n == 0:
-                    return None # no solution possible in this branch
-                elif n == 1: 
-                    return square # no reason to search any further
-                elif n < curBest:
-                    curBest = n
-                    result = square
+        LeastNrAllowedValues = SCS.GRIDSIZE + 1
+        for square in grid.squares:
+            if not SCS.IsClear(square.value):
+                continue
+            n = square.nrAllowedValues()
+            if n == 0:
+                return None # no solution possible in this branch
+            elif n == 1: 
+                return square # no reason to search any further
+            elif n < LeastNrAllowedValues:
+                LeastNrAllowedValues = n
+                result = square
         return result
 
     def Solve(self, grid, depth, reporter=Reporter())->bool:
         self.nPass += 1
         reporter.Report(Reporter.ReportType.STARTSOLVE, nPass=self.nPass, depth=depth, filled=self.validator.nrFieldsWithValues(grid))
-        if self.validator.IsCompleteValues(grid) and self.validator.IsValidValues(grid):
+        if not self.validator.IsValidValues(grid):
+            return False
+        if self.validator.IsCompleteValues(grid):
             return True
-        square = self.findBestFieldToTryNext(grid)
+        square = self.findBestSquareToTryNext(grid)
         if square == None:
             reporter.Report(Reporter.ReportType.STUCK)
             return False
         values = square.GetAllowedValues()
         for v in values:            
-            reporter.Report(Reporter.ReportType.NEWVALUE, row=grid.squareRow(square), col=grid.squareCol(square), 
-                                         values=square.GetAllowedValues(), value=v)
+            reporter.Report(Reporter.ReportType.NEWVALUE, row=grid.squareRow(square), col=grid.squareCol(square), values=values, value=v)
             square.value = v
             if self.Solve(grid, depth+1, reporter):
                 return True
